@@ -1,32 +1,25 @@
-# Prerequisites
-*.d
+# CMake - https://github.com/github/gitignore/blob/master/CMake.gitignore
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+CMakeSettings.json
+build/
+clang/
+cmake-build-debug/
+.idea/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+#Windows
+.vs
 
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+#Visual studio code
+.vscode
+.idea/workspace.xml
+.idea/vcs.xml
+.idea/modules.xml
+.idea/DBGH_ASSERTS.iml
