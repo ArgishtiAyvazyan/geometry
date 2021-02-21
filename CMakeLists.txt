@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.1)
 
-project(DistanceCalculator)
+project(RTree)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
@@ -24,9 +24,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             -Wauto-storage-class -Wauto-var-id -Wavailability -Wavr-rtlib-linking-quirks -Wbackend-plugin -Wbackslash-newline-escape -Wbad-function-cast -Wbinary-literal
             -Wbind-to-temporary-copy -Wbinding-in-condition -Wbitfield-constant-conversion -Wbitfield-enum-conversion -Wbitfield-width -Wbitwise-conditional-parentheses
             -Wbitwise-op-parentheses -Wblock-capture-autoreleasing -Wbool-conversion -Wbool-conversions -Wbool-operation -Wbraced-scalar-init -Wbridge-cast
-            -Wbuiltin-assume-aligned-alignment -Wbuiltin-macro-redefined -Wbuiltin-memcpy-chk-size -Wbuiltin-requires-header -Wc++-compat -Wc++17-compat
-            -Wc++17-compat-mangling -Wc++17-compat-pedantic -Wc++17-extensions -Wc++1y-extensions -Wc++1z-compat -Wc++1z-compat-mangling -Wc++1z-extensions -Wc++20-compat
-            -Wc++20-compat-pedantic -Wc++20-designator -Wc++20-extensions -Wc++2a-compat -Wc++2a-compat-pedantic -Wc++2a-extensions -Wcall-to-pure-virtual-from-ctor-dtor
+            -Wbuiltin-assume-aligned-alignment -Wbuiltin-macro-redefined -Wbuiltin-memcpy-chk-size -Wbuiltin-requires-header  -Wcall-to-pure-virtual-from-ctor-dtor
             -Wcast-align -Wcast-calling-convention -Wcast-of-sel-type -Wcast-qual -Wcast-qual-unrelated -Wchar-align -Wchar-subscripts -Wclang-cl-pch -Wclass-varargs -Wcomma
             -Wcomment -Wcomments -Wcompare-distinct-pointer-types -Wcomplex-component-init -Wconcepts-ts-compat -Wconditional-type-mismatch -Wconditional-uninitialized
             -Wconfig-macros -Wconstant-conversion -Wconstant-evaluated -Wconstant-logical-operand -Wconstexpr-not-const -Wconsumed -Wconversion -Wconversion-null -Wcoroutine
@@ -126,7 +124,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             -Wunused-volatile-lvalue -Wused-but-marked-unused -Wuser-defined-literals -Wuser-defined-warnings -Wvarargs -Wvariadic-macros -Wvec-elem-size -Wvector-conversion
             -Wvector-conversions -Wvexing-parse -Wvisibility -Wvla -Wvla-extension -Wvoid-ptr-dereference -Wvolatile-register-var -Wweak-template-vtables -Wweak-vtables -Wwritable-strings
             -Wwrite-strings -Wxor-used-as-pow -Wzero-as-null-pointer-constant -Wzero-length-array -Wswitch-default -fpermissive -fverbose-asm -pedantic
-            -Waddress -Wall -Wbool-operation -Wc++17-compat -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wenum-compare -Werror -Wextra -Wfloat-equal -Wformat
+            -Waddress -Wall -Wbool-operation -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wenum-compare -Werror -Wextra -Wfloat-equal -Wformat
             -Winit-self -Wint-in-bool-context -Wlogical-not-parentheses -Wmain -Wmemset-transposed-args -Wmisleading-indentation -Wnarrowing -Wnonnull -Wparentheses -Wpessimizing-move
             -Wpointer-arith -Wreorder -Wreturn-type -Wsequence-point -Wshadow -Wsign-compare -Wsizeof-pointer-div -Wsizeof-pointer-memaccess -Wstrict-aliasing -Wstrict-overflow=1
             -Wstrict-overflow=5 -Wswitch -Wswitch-enum -Wtautological-compare -Wtrigraphs -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunused-function -Wunused-label
@@ -164,9 +162,7 @@ endif()
 # Main sources.
 ########################################################################################################################
 
-#add_subdirectory ("src")
-#add_subdirectory ("thirdparty/DBGH_ASSERTS")
-
+add_subdirectory("include")
 
 ########################################################################################################################
 # Tests sources.
