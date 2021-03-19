@@ -3,14 +3,14 @@ project(main)
 
 
 add_executable(main main.cc)
-add_executable(RTreeUnitTests RTreeUnitTests.cc)
+add_executable(SpaceUtil SpaceUtil.cc)
 
 target_link_libraries(main PRIVATE Catch2 geometry_lib)
-target_link_libraries(RTreeUnitTests PRIVATE Catch2 geometry_lib)
+target_link_libraries(SpaceUtil PRIVATE Catch2 geometry_lib)
 
 if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     # using GCC
     target_link_libraries(main PRIVATE pthread tbb)
-    target_link_libraries(RTreeUnitTests PRIVATE pthread tbb)
+    target_link_libraries(SpaceUtil PRIVATE pthread tbb)
 endif()
 
