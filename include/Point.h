@@ -6,8 +6,7 @@
  * @copyright   Copyright (c) 2021
  */
 
-#ifndef RTREE_POINT_H
-#define RTREE_POINT_H
+#pragma once
 
 #include <cmath>
 #include <cstddef>
@@ -124,17 +123,41 @@ public:
         m_x = newY;
     }
 
+    /**
+     * The helper functions for structure binding.
+    */
+
+    template<std::size_t Index>
+    constexpr auto&& get()       &  noexcept { return getHelper<Index>(*this); }
+
+    template<std::size_t Index>
+    constexpr auto&& get()       && noexcept { return getHelper<Index>(*this); }
+
+    template<std::size_t Index>
+    constexpr auto&& get() const &  noexcept { return getHelper<Index>(*this); }
+
+    template<std::size_t Index>
+    constexpr auto&& get() const && noexcept { return getHelper<Index>(*this); }
+
+private:
+    template<std::size_t Index, typename T>
+    static constexpr auto&& getHelper(T&& t) noexcept
+    {
+        static_assert(Index < 2
+          , "Index out of bounds for space::Point");
+        if constexpr (Index == 0) return std::forward<T>(t).m_x;
+        if constexpr (Index == 1) return std::forward<T>(t).m_y;
+    }
+
 
 private:
     /**
      * @brief The x-axis value.
-     *
      */
     TCoordinate m_x {0};
 
     /**
      * @brief The y-axis value.
-     *
      */
     TCoordinate m_y {0};
 }; // class Point
@@ -196,45 +219,14 @@ constexpr auto distance(const Point<TCrd>& first, const Point<TCrd>& second) -> 
 
 
 } // namespace util
-
-/**
- * The helper functions for structure binding.
-*/
-
-template <std::size_t Index, typename T>
-constexpr auto pointGetHelper(T&& p)
-{
-    static_assert(Index < 2, "Index out of bounds for Point.");
-    if constexpr (Index == 0)
-    {
-        return std::forward<T>(p).x();
-    } else if constexpr (Index == 1)
-    {
-        return std::forward<T>(p).y();
-    }
-}
-
-template <std::size_t Index, typename TCrd>
-constexpr auto get(space::Point<TCrd>& p)
-{
-    return pointGetHelper<Index>(p);
-}
-
-template <std::size_t Index, typename TCrd>
-constexpr auto get(space::Point<TCrd> const& p)
-{
-    return pointGetHelper<Index>(p);
-}
-
-template <std::size_t Index, typename TCrd>
-constexpr auto get(space::Point<TCrd>&& p)
-{
-    return pointGetHelper<Index>(std::move(p));
-}
 } // namespace space
 
 namespace std
 {
+/**
+ * The helper functions for structure binding.
+*/
+
 template <typename TCrd>
 struct tuple_size<::space::Point<TCrd>>
     : integral_constant<size_t, 2>
@@ -252,4 +244,3 @@ struct tuple_element<Index, ::space::Point<TCrd>>
 };
 } // namespace std
 
-#endif //RTREE_POINT_H

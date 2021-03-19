@@ -6,8 +6,8 @@
  * @copyright   Copyright (c) 2021
  */
 
-#ifndef RTREE_RECT_H
-#define RTREE_RECT_H
+#pragma once
+
 
 #include <utility>
 #include "Point.h"
@@ -162,6 +162,34 @@ public:
         m_height = newHeight;
     }
 
+    /**
+     * The helper functions for structure binding.
+    */
+
+    template<std::size_t Index>
+    constexpr auto&& get()       &  noexcept { return getHelper<Index>(*this); }
+
+    template<std::size_t Index>
+    constexpr auto&& get()       && noexcept { return getHelper<Index>(*this); }
+
+    template<std::size_t Index>
+    constexpr auto&& get() const &  noexcept { return getHelper<Index>(*this); }
+
+    template<std::size_t Index>
+    constexpr auto&& get() const && noexcept { return getHelper<Index>(*this); }
+
+private:
+    template<std::size_t Index, typename T>
+    static constexpr auto&& getHelper(T&& t) noexcept
+    {
+        static_assert(Index < 4
+          , "Index out of bounds for space::Point");
+        if constexpr (Index == 0) return std::forward<T>(t).pos().x();
+        if constexpr (Index == 1) return std::forward<T>(t).pos().y();
+        if constexpr (Index == 2) return std::forward<T>(t).m_width;
+        if constexpr (Index == 3) return std::forward<T>(t).m_height;
+    }
+
 
 private:
 
@@ -299,43 +327,6 @@ constexpr bool intersects(const Rect<TCrd>& first, const Rect<TCrd>& second)
 
 
 } // namespace util
-
-/**
- * The helper functions for structure binding.
-*/
-template <std::size_t Index, typename T>
-constexpr auto rectGetHelper(T&& p)
-{
-    static_assert(Index < 4, "Index out of bounds for Point.n");
-    if constexpr (Index == 0 || Index == 1)
-    {
-        return pointGetHelper<Index>(p.pos());
-    } else if constexpr (Index == 2)
-    {
-        return std::forward<T>(p).width();
-    } else if constexpr (Index == 3)
-    {
-        return std::forward<T>(p).height();
-    }
-}
-
-template <std::size_t Index, typename TCrd>
-constexpr auto get(space::Rect<TCrd>& p)
-{
-    return rectGetHelper<Index>(p);
-}
-
-template <std::size_t Index, typename TCrd>
-constexpr auto get(const space::Rect<TCrd>& p)
-{
-    return rectGetHelper<Index>(p);
-}
-
-template <std::size_t Index, typename TCrd>
-constexpr auto get(space::Rect<TCrd>&& p)
-{
-    return rectGetHelper<Index>(std::move(p));
-}
 } // namespace space
 
 namespace std
@@ -356,5 +347,4 @@ struct tuple_element<Index, ::space::Rect<TCrd>>
     static_assert(Index < tuple_size_v<::space::Rect<TCrd>>, "Index out of bounds for Rect.");
 };
 } // namespace std
-#endif //RTREE_RECT_H
 

@@ -5,8 +5,8 @@ project(main)
 add_executable(main main.cc)
 add_executable(RTreeUnitTests RTreeUnitTests.cc)
 
-target_link_libraries(main PRIVATE Catch2 r_tree_lib)
-target_link_libraries(RTreeUnitTests PRIVATE Catch2 r_tree_lib)
+target_link_libraries(main PRIVATE Catch2 geometry_lib)
+target_link_libraries(RTreeUnitTests PRIVATE Catch2 geometry_lib)
 
 if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     # using GCC

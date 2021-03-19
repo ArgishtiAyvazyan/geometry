@@ -1,2 +1,2 @@
-# RTree
-R Tree implementation.
+# Geometry library
+Geometry library implementation.
