@@ -1,5 +1,5 @@
 /**
- * @file        Rect.h
+ * @file        Point.h
  * @author      Argishti Ayvazyan (ayvazyan.argishti@gmail.com)
  * @brief       Declaring the Point class and utilities for this.
  * @date        19-02-2021
@@ -24,8 +24,9 @@ namespace space
 template <typename TCrd>
 class Point
 {
-    using TCoordinate = TCrd;
 public:
+    using TCoordinate = TCrd;
+
     constexpr Point() = default;
 
     constexpr ~Point() = default;
@@ -46,9 +47,9 @@ public:
      * @param   x The x-axis coordinate.
      * @param   y The x-axis coordinate.
      */
-    constexpr Point(TCoordinate x, TCoordinate y)
-        : m_x {x},
-        m_y {y}
+    constexpr Point(TCoordinate x, TCoordinate y) noexcept
+        : m_x {x}
+        , m_y {y}
     {
     }
 
@@ -181,44 +182,6 @@ TOstream& operator<<(TOstream& os, const space::Point<TCrd>& point)
     return os;
 }
 
-namespace util
-{
-
-/**
- * @brief   Moves this given Point by the specified amount.
- *
- * @tparam  TCrd The type of coordinates.
- * @param   point The point for moving.
- * @param   deltaX The amount to offset the x-coordinate.
- * @param   deltaY The amount to offset the y-coordinate.
- */
-template <typename TCrd>
-constexpr void move(Point<TCrd>& point, TCrd deltaX, TCrd deltaY) noexcept
-{
-    point.setX(point.x() + deltaX);
-    point.setY(point.y() + deltaY);
-}
-
-/**
- * @brief   Compute the distance between two given points.
- *
- * @tparam  TCrd The type of coordinates.
- * @tparam  TRetVal The type of return value (by default TCrd)
- * @param   first The first point.
- * @param   second The second point.
- * @return  The computed distance.
- */
-template <typename TCrd, typename TRetVal = TCrd>
-[[nodiscard]]
-constexpr auto distance(const Point<TCrd>& first, const Point<TCrd>& second) -> TRetVal
-{
-    const auto xDelta = first.x() - second.x();
-    const auto yDelta = first.y() - second.y();
-    return std::sqrt(xDelta * xDelta + yDelta * yDelta);
-}
-
-
-} // namespace util
 } // namespace space
 
 namespace std

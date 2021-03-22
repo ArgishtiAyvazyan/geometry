@@ -16,6 +16,8 @@
 
 
 #include "Rect.h"
+#include "Square.h"
+#include "Utility.h"
 
 template <typename TCrd>
 auto spaceToBoostRect(const space::Rect<TCrd>& rect)
@@ -28,7 +30,43 @@ auto spaceToBoostRect(const space::Rect<TCrd>& rect)
     return box(point(x1, y1), point(x2, y2));
 }
 
-TEST_CASE("Intersects", "[space::util]")
+TEST_CASE("Cover::Rect::point", "[space::util]")
+{
+    space::Rect<int32_t> rect { {0, 0}, 100, 100 };
+    space::Point<int32_t> point { 50, 50 };
+    REQUIRE (space::util::contains(rect, point));
+    space::util::move(point, 100, 100);
+    REQUIRE_FALSE (space::util::contains(rect, point));
+}
+
+TEST_CASE("Cover::Rect", "[space::util]")
+{
+    space::Rect<int32_t> rect1 { {0, 0}, 100, 100 };
+    space::Rect<int32_t> rect2 { {50, 50}, 10, 10 };
+    REQUIRE (space::util::contains(rect1, rect2));
+    space::util::move(rect2, 100, 100);
+    REQUIRE_FALSE (space::util::contains(rect1, rect2));
+}
+
+TEST_CASE("Cover::Square::point", "[space::util]")
+{
+    space::Square<int32_t> rect { {0, 0}, 100 };
+    space::Point<int32_t> point { 50, 50 };
+    REQUIRE (space::util::contains(rect, point));
+    space::util::move(point, 100, 100);
+    REQUIRE_FALSE (space::util::contains(rect, point));
+}
+
+TEST_CASE("Cover::Square", "[space::util]")
+{
+    space::Square<int32_t> rect1 { {0, 0}, 100 };
+    space::Rect<int32_t> rect2 { {50, 50}, 10, 10 };
+    REQUIRE (space::util::contains(rect1, rect2));
+    space::util::move(rect2, 100, 100);
+    REQUIRE_FALSE (space::util::contains(rect1, rect2));
+}
+
+TEST_CASE("Intersects::Rect", "[space::util]")
 {
     space::Rect<int32_t> rect {{50, 13}, 100, 100};
     space::Rect<int32_t> rect1 {{0, 0}, 123, 123};
@@ -59,21 +97,21 @@ TEST_CASE("Intersects", "[space::util]")
     }
 }
 
-TEST_CASE("Cover::point", "[space::util]")
+TEST_CASE("Intersects::Square", "[R-Tree::Rect]")
 {
-    space::Rect<int32_t> rect { {0, 0}, 100, 100 };
-    space::Point<int32_t> point { 50, 50 };
-    REQUIRE (space::util::contains(rect, point));
-    space::util::move(point, 100, 100);
-    REQUIRE_FALSE (space::util::contains(rect, point));
-}
+    space::Rect<int32_t> rect {{50, 13}, 100, 100};
+    space::Square<int32_t> rect1 {{0, 0}, 123};
 
-TEST_CASE("Cover::rect", "[space::util]")
-{
-    space::Rect<int32_t> rect1 { {0, 0}, 100, 100 };
-    space::Rect<int32_t> rect2 { {50, 50}, 10, 10 };
-    REQUIRE (space::util::contains(rect1, rect2));
-    space::util::move(rect2, 100, 100);
-    REQUIRE_FALSE (space::util::contains(rect1, rect2));
-    std::cout << "Hello" << std::endl;
+    REQUIRE(space::util::hesIntersect(rect, rect1));
+    REQUIRE(space::util::hesIntersect(rect1, rect));
+
+    space::util::move(rect1, 149, 110);
+
+    REQUIRE(space::util::hesIntersect(rect, rect1));
+    REQUIRE(space::util::hesIntersect(rect1, rect));
+
+    space::util::move(rect1.pos(), 100000, 100000);
+
+    REQUIRE_FALSE(space::util::hesIntersect(rect, rect1));
+    REQUIRE_FALSE(space::util::hesIntersect(rect1, rect));
 }

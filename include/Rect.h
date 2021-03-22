@@ -33,7 +33,10 @@ namespace space
 template <typename TCrd>
 class Rect
 {
+public:
     using TCoordinate = TCrd;
+
+private:
     using TPoint = space::Point<TCoordinate>;
 public:
 
@@ -59,10 +62,10 @@ public:
      * @param   width A value greater than or equal to 0 that specifies the Width of the Size structure.
      * @param   height A value greater than or equal to 0 that specifies the Height of the Size structure.
      */
-    constexpr Rect(const TPoint& pos, TCoordinate width, TCoordinate height)
-        : m_pos {pos},
-        m_width {width},
-        m_height {height}
+    constexpr Rect(const TPoint& pos, TCoordinate width, TCoordinate height) noexcept
+        : m_pos {pos}
+        , m_width {width}
+        , m_height {height}
     {
     }
 
@@ -231,21 +234,6 @@ TOstream& operator<<(TOstream& os, const space::Rect<TCrd>& rect)
 
 namespace util
 {
-
-/**
- * @brief Moves the rectangle by the specified horizontal and vertical amounts.
- *
- * @tparam TCrd TCrd The type of coordinates.
- * @param rect he rectangle.
- * @param deltaX The horizontal amounts.
- * @param deltaY The vertical amounts.
- */
-template <typename TCrd>
-constexpr void move(Rect<TCrd>& rect, TCrd deltaX, TCrd deltaY) noexcept
-{
-    move(rect.pos(), deltaX, deltaY);
-}
-
 /**
  * @brief Returns the position of the given rectangle top-left corner.
  *
@@ -255,7 +243,7 @@ constexpr void move(Rect<TCrd>& rect, TCrd deltaX, TCrd deltaY) noexcept
  */
 template <typename TCrd>
 [[nodiscard]]
-constexpr auto topLeft(const Rect<TCrd>& rect) -> space::Point<TCrd>
+constexpr space::Point<TCrd> topLeft(const Rect<TCrd>& rect) noexcept
 {
     return {rect.pos().x(), rect.pos.y() + rect.height()};
 }
@@ -269,7 +257,7 @@ constexpr auto topLeft(const Rect<TCrd>& rect) -> space::Point<TCrd>
  */
 template <typename TCrd>
 [[nodiscard]]
-constexpr auto topRight(const Rect<TCrd>& rect) -> space::Point<TCrd>
+constexpr space::Point<TCrd>  topRight(const Rect<TCrd>& rect) noexcept
 {
     return {rect.pos().x() + rect.width(), rect.pos().y() + rect.height()};
 }
@@ -283,7 +271,7 @@ constexpr auto topRight(const Rect<TCrd>& rect) -> space::Point<TCrd>
  */
 template <typename TCrd>
 [[nodiscard]]
-constexpr auto bottomLeft(const Rect<TCrd>& rect) -> space::Point<TCrd>
+constexpr space::Point<TCrd> bottomLeft(const Rect<TCrd>& rect) noexcept
 {
     return rect.pos();
 }
@@ -297,94 +285,9 @@ constexpr auto bottomLeft(const Rect<TCrd>& rect) -> space::Point<TCrd>
  */
 template <typename TCrd>
 [[nodiscard]]
-constexpr auto bottomRight(const Rect<TCrd>& rect) -> space::Point<TCrd>
+constexpr space::Point<TCrd> bottomRight(const Rect<TCrd>& rect) noexcept
 {
     return {rect.pos().x() + rect.width(), rect.pos().y()};
-}
-
-/**
- * @brief Returns true if the given rectangles intersects
- *          (i.e., there is at least one pixel that is within both rectangles),
- *          otherwise returns false.
- *
- *
- * @example
- *      hes intersection                                    hasn't intersection
- *
- *      *****************************                       *****************
- *      *                           *                       *               *
- *      *               *****************************       *               *
- *      *               *           *               *       *               *
- *      *               *           *               *       *****************
- *      *****************************               *
- *                      *                           *               *****************
- *                      *****************************               *               *
- *                                                                  *****************
- *
- *
- * @tparam TCrd The type of coordinates.
- * @param first The first rectangle.
- * @param second the second rectangle.
- * @return true if rectangles have an intersection, otherwise false.
- */
-template <typename TCrd>
-[[nodiscard]]
-constexpr bool hesIntersect(const Rect<TCrd>& first, const Rect<TCrd>& second)
-{
-    const auto[firstX1, firstY1] = bottomLeft(first);
-    const auto[firstX2, firstY2] = topRight(first);
-    const auto[secondX1, secondY1] = bottomLeft(second);
-    const auto[secondX2, secondY2] = topRight(second);
-
-    return firstX2 >= secondX1 && secondX2 >= firstX1 && firstY2 >= secondY1 && secondY2 >= firstY1;
-}
-
-/**
- * @brief  Returns true if the given point is inside or on the edge of the rectangle, otherwise returns false.
- *
- * @tparam TCrd The type of coordinates.
- * @param rect  The given rectangle.
- * @param point The given point.
- * @return true if contains, otherwise returns false.
- */
-template <typename TCrd>
-[[nodiscard]]
-constexpr bool contains(const Rect<TCrd>& rect, const Point<TCrd>& point)
-{
-    const auto[x1, y1] = bottomLeft(rect);
-    const auto[x2, y2] = topRight(rect);
-    const auto[px, py] = point;
-    return ((x1 <= px) && (px <= x2) && (y1 <= py) && (py <= y2));
-}
-
-/**
- * @brief   Returns true if the secondRect is inside the firstRect. otherwise returns false.
- *
- * @example
- *      contains                                    not contains
- *
- *      *****************************                       *****************
- *      *                           *                       *               *
- *      *               *********   *                       *               *
- *      *               *       *   *                       *               *
- *      *               *********   *                       *****************
- *      *****************************
- *                                                                  *****************
- *                                                                  *               *
- *                                                                  *****************
-
-
- * @tparam  TCrd The type of coordinates.
- * @param   firstRect The first rect.
- * @param   secondRect The second rect.
- * @return  true if contains, otherwise returns false.
- */
-template <typename TCrd>
-[[nodiscard]]
-constexpr bool contains(const Rect<TCrd>& firstRect, const Rect<TCrd>& secondRect)
-{
-    return space::util::contains(firstRect, secondRect.pos())
-           && space::util::contains(firstRect, space::util::topRight(secondRect));
 }
 
 } // namespace util
