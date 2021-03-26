@@ -2,8 +2,8 @@
  * @file        SpaceUtil.cc
  * @author      Argishti Ayvazyan (ayvazyan.argishti@gmail.com)
  * @brief       Tests implementation for unti tests for space::utils.
- * @date        20-02-2021
- * @copyright   Copyright (c) 2020
+ * @date        20-03-2021
+ * @copyright   Copyright (c) 2021
  */
 
 #define CATCH_CONFIG_MAIN
