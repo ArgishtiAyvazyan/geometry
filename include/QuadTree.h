@@ -11,6 +11,7 @@
 #include <array>
 #include <memory>
 #include <stack>
+#include <algorithm>
 
 #include <boost/container/flat_set.hpp>
 
@@ -68,41 +69,61 @@ private:
             m_child[static_cast<std::size_t>(pos)] = std::move(child);
         }
 
-        std::unique_ptr<Node>& getChild(ZOrderPos pos)
+        [[nodiscard]]
+        std::unique_ptr<Node>& getChild(ZOrderPos pos) noexcept
         {
             return m_child[static_cast<std::size_t>(pos)];
         }
 
-        TChildContainer& getChildren()
+        [[nodiscard]]
+        TChildContainer& getChildren() noexcept
         {
             return m_child;
         }
 
-        const TChildContainer& getChildren() const
+        [[nodiscard]]
+        const TChildContainer& getChildren() const noexcept
         {
             return m_child;
         }
 
-        const TValueContainer& getValues() const
+        [[nodiscard]]
+        const TValueContainer& getValues() const noexcept
         {
             return m_values;
         }
 
-        TValueContainer& getValues()
+        [[nodiscard]]
+        TValueContainer& getValues() noexcept
         {
             return m_values;
         }
 
-        TRegion& region()
+        [[nodiscard]]
+        TRegion& region() noexcept
         {
             return m_region;
         }
 
-        const TRegion& region() const
+        [[nodiscard]]
+        const TRegion& region() const noexcept
         {
             return m_region;
         }
 
+        [[nodiscard]]
+        bool empty() const noexcept
+        {
+            (void)getValues().size();
+            if (!getValues().empty())
+            {
+                return false;
+            }
+            return std::ranges::all_of(getChildren(), [](const auto& child)
+            {
+               return nullptr == child;
+            });
+        }
 
     private:
         TRegion m_region;
@@ -196,12 +217,18 @@ public:
      */
     void remove(const TKey& key)
     {
-        auto *node = find_node(key);
+        auto* node = findNode(key);
         if (nullptr == node)
         {
             return;
         }
-        node->eraseValue(key);
+        (*node)->eraseValue(key);
+
+        // remove node if empty.
+        if ((*node)->empty())
+        {
+            node->reset(nullptr);
+        }
     }
 
     /**
@@ -212,12 +239,12 @@ public:
      */
     bool contains(const TKey& key) const
     {
-        auto *node = find_node(key);
-        if (nullptr == node)
+        const auto pNode = findNode(key);
+        if (nullptr == pNode)
         {
             return false;
         }
-        const auto& values = node->getValues();
+        const auto& values = (*pNode)->getValues();
         return values.end() != values.find(key);
     }
 
@@ -228,27 +255,32 @@ private:
      * @brief   Returns node for the given key.
      *
      * @param   key The key.
-     * @return  The node pointer if that exists, otherwise null.
+     * @return  The pointer to node unique_ptr if that exists, otherwise null.
      */
-    Node* find_node(const TKey& key) const
+    const TNodePtr* findNode(const TKey& key) const
     {
         if (nullptr == m_root)
         {
             return nullptr;
         }
-        auto *currentNode = m_root.get();
-        while (!hasIntersectionWithRegionSplitLines(key, currentNode->region()))
+        auto* currentNode = std::addressof(m_root);
+        while (!hasIntersectionWithRegionSplitLines(key, (*currentNode)->region()))
         {
-            const auto zOrderPos = getZOrderPos(currentNode->region(), key);
-            auto& child = currentNode->getChild(zOrderPos);
+            const auto zOrderPos = getZOrderPos((*currentNode)->region(), key);
+            auto& child = (*currentNode)->getChild(zOrderPos);
 
             if (nullptr == child)
             {
                 return nullptr;
             }
-            currentNode = child.get();
+            currentNode = std::addressof(child);
         }
         return currentNode;
+    }
+
+    TNodePtr* findNode(const TKey& key)
+    {
+        return const_cast<TNodePtr*>(std::as_const(*this).findNode(key));
     }
 
     /**
