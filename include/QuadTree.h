@@ -237,6 +237,7 @@ public:
      * @param   key The key to locate in the quadtree.
      * @return  true if the quadtree contains an element with the specified key; otherwise, false.
      */
+    [[nodiscard]]
     bool contains(const TKey& key) const
     {
         const auto pNode = findNode(key);
@@ -246,6 +247,17 @@ public:
         }
         const auto& values = (*pNode)->getValues();
         return values.end() != values.find(key);
+    }
+
+    /**
+     * @brief  Checks the container empty or not.
+     *
+     * @return true if the container is empty, otherwise false.
+     */
+    [[nodiscard]]
+    bool empty() const noexcept
+    {
+        return (nullptr == m_root) || m_root->empty();
     }
 
 private:

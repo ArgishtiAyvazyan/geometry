@@ -153,7 +153,7 @@ void removeTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
 
 
 template <typename TIndex, typename TCrd>
-void emptyIndexTest()
+void actionsOnEmptyIndexTest()
 {
     TIndex index;
     space::Rect<TCrd> rect {{13, 13}, 13, 13};
@@ -165,5 +165,18 @@ void emptyIndexTest()
     index.remove(rect);
 }
 
+template <typename TIndex, typename TCrd>
+void emptyIndexTest()
+{
+    TIndex index;
+    REQUIRE(index.empty());
+    space::Rect<TCrd> rect {{13, 13}, 13, 13};
+    index.insert(rect);
+    REQUIRE_FALSE(index.empty());
+    index.remove({{14, 13}, 13, 13});
+    REQUIRE_FALSE(index.empty());
+    index.remove({{13, 13}, 13, 13});
+    REQUIRE(index.empty());
+}
 
 } // namespace test_util

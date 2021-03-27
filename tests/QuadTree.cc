@@ -44,7 +44,13 @@ TEST_CASE("QuadTree remove.", "[space::QuadTree]")
         1'000, 1'000'000, 1'000'000);
 }
 
-TEST_CASE("QuadTree empty.", "[space::QuadTree]")
+TEST_CASE("QuadTree actions on empty tree", "[space::QuadTree]")
+{
+    using value_type = int32_t;
+    test_util::actionsOnEmptyIndexTest<space::QuadTree<space::Rect<value_type>>, value_type>();
+}
+
+TEST_CASE("QuadTree empty", "[space::QuadTree]")
 {
     using value_type = int32_t;
     test_util::emptyIndexTest<space::QuadTree<space::Rect<value_type>>, value_type>();
