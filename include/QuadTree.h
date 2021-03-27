@@ -54,14 +54,15 @@ private:
         {
         }
 
-        void addValue(const TValue& box)
+        bool addValue(const TValue& box)
         {
-            m_values.insert(box);
+            const auto[it, success] = m_values.insert(box);
+            return success;
         }
 
-        void eraseValue(const TValue& box)
+        bool eraseValue(const TValue& box)
         {
-            m_values.erase(box);
+            return m_values.erase(box);
         }
 
         void setChild(ZOrderPos pos, std::unique_ptr<Node>&& child)
@@ -114,14 +115,13 @@ private:
         [[nodiscard]]
         bool empty() const noexcept
         {
-            (void)getValues().size();
             if (!getValues().empty())
             {
                 return false;
             }
             return std::ranges::all_of(getChildren(), [](const auto& child)
             {
-               return nullptr == child;
+                return nullptr == child;
             });
         }
 
@@ -138,8 +138,11 @@ private:
     using TNodePtr = std::unique_ptr<Node>;
 public:
 
+    using size_type = std::size_t;
+
     QuadTree()
         : m_root(nullptr)
+        , m_size(0)
     {
     }
 
@@ -147,8 +150,9 @@ public:
      * @brief   Inserts a value to the quad tree.
      *
      * @param   key The new value.
+     * @return  true if value successfully inserted, otherwise false.
      */
-    void insert(const TKey& key)
+    bool insert(const TKey& key)
     {
         if (nullptr == m_root)
         {
@@ -157,8 +161,13 @@ public:
 
         growUpIfNeeds(key);
 
-        auto *node = growDownIfNeedsAndReturnLastNode(key);
-        node->addValue(key);
+        auto* node = growDownIfNeedsAndReturnLastNode(key);
+        if (node->addValue(key))
+        {
+            ++m_size;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -171,8 +180,8 @@ public:
     template <typename TOutIt>
     void query(const TKey& key, TOutIt outIt) const
     {
-        std::stack<const Node *> nodeStack;
-        auto pushNodeIfNotNull = [&nodeStack](const Node *node)
+        std::stack<const Node*> nodeStack;
+        auto pushNodeIfNotNull = [&nodeStack](const Node* node)
         {
             if (nullptr == node)
             {
@@ -182,7 +191,7 @@ public:
         };
         auto popNode = [&nodeStack]()
         {
-            auto *node = nodeStack.top();
+            auto* node = nodeStack.top();
             nodeStack.pop();
             return node;
         };
@@ -190,7 +199,7 @@ public:
 
         while (!nodeStack.empty())
         {
-            const Node *currentNode = popNode();
+            const Node* currentNode = popNode();
             if (!space::util::hesIntersect(key, currentNode->region()))
             {
                 continue;
@@ -222,7 +231,10 @@ public:
         {
             return;
         }
-        (*node)->eraseValue(key);
+        if ((*node)->eraseValue(key))
+        {
+            --m_size;
+        }
 
         // remove node if empty.
         if ((*node)->empty())
@@ -266,6 +278,17 @@ public:
     void clear()
     {
         m_root.reset();
+    }
+
+    /**
+     * @brief   Get the number of values stored in the index.
+     *
+     * @return  The number of values stored in the index.
+     */
+    [[nodiscard]]
+    size_type size() const noexcept
+    {
+        return m_size;
     }
 
 private:
@@ -353,7 +376,7 @@ private:
      */
     Node* growDownIfNeedsAndReturnLastNode(const TKey& key)
     {
-        auto *currentNode = m_root.get();
+        auto* currentNode = m_root.get();
         while (!(hasIntersectionWithRegionSplitLines(key, currentNode->region())
                  || 1 == currentNode->region().size()))
         {
@@ -478,6 +501,8 @@ private:
      * @brief The root for quadtree.
      */
     TNodePtr m_root;
+
+    size_type m_size;
 };
 
 } // namespace space

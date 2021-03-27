@@ -67,12 +67,13 @@ int rand(int from, int to)
 template <typename TCrd>
 auto getRandPoint(TCrd maxPos)
 {
-    return space::Point { rand(0, maxPos), rand(0, maxPos) };
+    return space::Point {rand(0, maxPos), rand(0, maxPos)};
 }
+
 template <typename TCrd>
 auto getRandRect(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
 {
-    return space::Rect<TCrd> { getRandPoint(maxPos), rand(0, maxRectWidth), rand(0, maxRectHeight)};
+    return space::Rect<TCrd> {getRandPoint(maxPos), rand(0, maxRectWidth), rand(0, maxRectHeight)};
 }
 
 template <typename TIndex, typename TCrd, size_t Count>
@@ -94,10 +95,11 @@ void queryTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
     for (const auto& rect : initialRects)
     {
         REQUIRE_FALSE(index.contains(rect));
-        index.insert(rect);
+        REQUIRE(index.insert(rect));
         REQUIRE(index.contains(rect));
         box b = spaceToBoostRect(rect);
         rtree.insert(std::make_pair(b, 0));
+        REQUIRE(index.size() == rtree.size());
     }
 
     for (size_t i = 0; i < Count; ++i)
@@ -127,9 +129,14 @@ template <typename TIndex, typename TCrd, size_t Count>
 void removeTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
 {
     TIndex index;
+    size_t size = 0;
     for (size_t i = 0; i < Count; ++i)
     {
-        index.insert(getRandRect(maxPos, maxRectWidth, maxRectHeight));
+        REQUIRE(index.size() == size);
+        if (index.insert(getRandRect(maxPos, maxRectWidth, maxRectHeight)))
+        {
+            ++size;
+        }
     }
 
     for (size_t i = 0; i < Count; ++i)
@@ -144,7 +151,8 @@ void removeTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
             index.remove(rect);
             REQUIRE_FALSE(index.contains(rect));
         }
-
+        size -= quadTreeQueryRes.size();
+        REQUIRE(index.size() == size);
         std::vector<space::Rect<TCrd>> quadTreeQueryRes2;
         index.query(removeRect, std::back_inserter(quadTreeQueryRes2));
         REQUIRE(quadTreeQueryRes2.empty());
@@ -191,6 +199,32 @@ void clearIndexTest()
     REQUIRE_FALSE(index.empty());
     index.clear();
     REQUIRE(index.empty());
+}
+
+template <typename TIndex, typename TCrd, size_t Count>
+void sizeTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
+{
+    std::set<space::Rect<TCrd>> initialRects;
+    for (size_t i = 0; i < Count; ++i)
+    {
+        initialRects.insert(getRandRect(maxPos, maxRectWidth, maxRectHeight));
+    }
+
+    TIndex index;
+    size_t size = 0;
+    for (const auto& rect : initialRects)
+    {
+        REQUIRE(index.size() == size);
+        ++size;
+        index.insert(rect);
+    }
+
+    for (const auto& rect : initialRects)
+    {
+        REQUIRE(index.size() == size);
+        --size;
+        index.remove(rect);
+    }
 }
 
 } // namespace test_util

@@ -7,10 +7,10 @@
  */
 
 #define CATCH_CONFIG_MAIN
+
 #include <catch2/catch.hpp>
 
 #include "IndexTestingUtils.h"
-
 
 
 TEST_CASE("QuadTree for points", "[space::QuadTree]")
@@ -60,4 +60,10 @@ TEST_CASE("QuadTree clear", "[space::QuadTree]")
 {
     using value_type = int32_t;
     test_util::clearIndexTest<space::QuadTree<space::Rect<value_type>>, value_type>();
+}
+
+TEST_CASE("QuadTree size", "[space::QuadTree]")
+{
+    using value_type = int32_t;
+    test_util::sizeTest<space::QuadTree<space::Rect<value_type>>, value_type, 10'000>(1'000, 1'000, 1'000);
 }
