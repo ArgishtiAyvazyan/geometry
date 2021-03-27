@@ -55,3 +55,9 @@ TEST_CASE("QuadTree empty", "[space::QuadTree]")
     using value_type = int32_t;
     test_util::emptyIndexTest<space::QuadTree<space::Rect<value_type>>, value_type>();
 }
+
+TEST_CASE("QuadTree clear", "[space::QuadTree]")
+{
+    using value_type = int32_t;
+    test_util::clearIndexTest<space::QuadTree<space::Rect<value_type>>, value_type>();
+}

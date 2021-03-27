@@ -260,6 +260,14 @@ public:
         return (nullptr == m_root) || m_root->empty();
     }
 
+    /**
+     * @brief Removes all values stored in the container.
+     */
+    void clear()
+    {
+        m_root.reset();
+    }
+
 private:
 
     /**

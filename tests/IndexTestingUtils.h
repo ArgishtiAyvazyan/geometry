@@ -102,7 +102,7 @@ void queryTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
 
     for (size_t i = 0; i < Count; ++i)
     {
-        space::Rect<TCrd> queryRect {{std::rand() % 900, std::rand() % 900}, std::rand() % 99, std::rand() % 99};
+        space::Rect<TCrd> queryRect {getRandRect(maxPos, maxRectWidth, maxRectHeight)};
 
         std::vector<space::Rect<TCrd>> quadTreeQueryRes;
         index.query(queryRect, std::back_inserter(quadTreeQueryRes));
@@ -176,6 +176,20 @@ void emptyIndexTest()
     index.remove({{14, 13}, 13, 13});
     REQUIRE_FALSE(index.empty());
     index.remove({{13, 13}, 13, 13});
+    REQUIRE(index.empty());
+}
+
+template <typename TIndex, typename TCrd>
+void clearIndexTest()
+{
+    TIndex index;
+    REQUIRE(index.empty());
+    for (size_t i = 0; i < 100; ++i)
+    {
+        index.insert(getRandRect(100, 100, 100));
+    }
+    REQUIRE_FALSE(index.empty());
+    index.clear();
     REQUIRE(index.empty());
 }
 
