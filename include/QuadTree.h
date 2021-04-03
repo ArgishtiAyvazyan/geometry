@@ -8,15 +8,14 @@
 
 #pragma once
 
-#include <array>
 #include <memory>
-#include <stack>
 #include <algorithm>
 
-#include <boost/container/flat_set.hpp>
+#include "Definitions.h"
 
-#include <Square.h>
-#include <Utility.h>
+#include "Point.h"
+#include "Square.h"
+#include "Utility.h"
 
 namespace space
 {
@@ -44,8 +43,8 @@ private:
     public:
         using TValue = TKey;
         using TRegion = space::Square<typename TKey::TCoordinate>;
-        using TChildContainer = std::array<std::unique_ptr<Node>, 4>;
-        using TValueContainer = boost::container::flat_set<TValue>;
+        using TChildContainer = space::Array<std::unique_ptr<Node>, 4>;
+        using TValueContainer = space::FlatSet<TValue>;
 
         Node() = delete;
 
@@ -180,7 +179,7 @@ public:
     template <typename TOutIt>
     void query(const TKey& key, TOutIt outIt) const
     {
-        std::stack<const Node*> nodeStack;
+        space::Stack<const Node*> nodeStack;
         auto pushNodeIfNotNull = [&nodeStack](const Node* node)
         {
             if (nullptr == node)
