@@ -51,6 +51,18 @@ TEST_CASE("Cover::Rect", "[space::util]")
     REQUIRE_FALSE (space::util::contains(rect1, rect2));
 }
 
+TEST_CASE("Create::Rect", "[space::util]")
+{
+    space::Point<int32_t> leftBottom {1, 1};
+    space::Point<int32_t> rightTop {13, 13};
+
+    space::Rect<int32_t> rect {leftBottom, rightTop};
+
+    REQUIRE (space::util::bottomLeft(rect) == leftBottom);
+    REQUIRE (space::util::topRight(rect) == rightTop);
+}
+
+
 TEST_CASE("Cover::Square::point", "[space::util]")
 {
     space::Square<int32_t> rect {{0, 0}, 100};
@@ -166,6 +178,23 @@ TEST_CASE("move::SimplePolygon", "[space::SimplePolygon]")
                                ));
 }
 
+TEST_CASE("boundaryBoxOf::SimplePolygon", "[space::SimplePolygon]")
+{
+    using Poly = space::SimplePolygon<int32_t>;
+    using Rect = space::Rect<int32_t>;
+
+    Poly::TPiecewiseLinearCurve boundary {{0,   0},
+                                          {1,   1},
+                                          {12,  14},
+                                          {124, 444},
+                                          {2,   2}};
+
+    Poly poly {boundary};
+    const auto bBox = space::util::boundaryBoxOf(poly);
+    REQUIRE(bBox == Rect {{0,   0},
+                          {124, 444}});
+}
+
 TEST_CASE("empty::Polygon", "[space::Polygon]")
 {
     using Poly = space::Polygon<int32_t>;
@@ -272,4 +301,26 @@ TEST_CASE("move::Polygon", "[space::SimplePolygon]")
     REQUIRE (std::ranges::equal(boundary.boundaryCurve(), poly.boundary().boundaryCurve(), equal));
 
     REQUIRE (std::ranges::equal(holes, poly.holes(), equal));
+}
+
+TEST_CASE("boundaryBoxOf::Polygon", "[space::SimplePolygon]")
+{
+    using Poly = space::Polygon<int32_t>;
+    using Rect = space::Rect<int32_t>;
+    using SimplePoly = Poly::TSimplePolugon;
+
+    SimplePoly boundary {{{0, 0},
+                             {1, 1},
+                             {12, 14},
+                             {124, 444},
+                             {2, 2}}};
+
+    space::Vector<SimplePoly> holes;
+    holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
+    holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
+
+    Poly poly {boundary, holes};
+    const auto bBox = space::util::boundaryBoxOf(poly);
+    REQUIRE(bBox == Rect {{0,   0},
+                          {124, 444}});
 }

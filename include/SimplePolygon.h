@@ -12,6 +12,7 @@
 
 #include "Definitions.h"
 #include "Point.h"
+#include "Rect.h"
 
 namespace space
 {
@@ -137,6 +138,22 @@ constexpr void move(SimplePolygon<TCrd>& poly, TCrd deltaX, TCrd deltaY) noexcep
         move(point, deltaX, deltaY);
     };
     std::ranges::for_each(poly.boundaryCurve(), std::ref(movePoint));
+}
+
+/**
+ * @brief       Gets the boundary box of the given simple polygon.
+ *
+ * @details     The algorithm complexity is O(n).
+ *
+ * @tparam TCrd The type of coordinates.
+ * @param poly  The given polygon.
+ * @return      The boundary box (space::Rect) of the given polygon.
+ */
+template <typename TCrd>
+constexpr space::Rect<TCrd> boundaryBoxOf(const SimplePolygon<TCrd>& poly) noexcept
+{
+    auto[leftBottomIt, rightTopIt] = std::ranges::minmax_element(poly.boundaryCurve());
+    return space::Rect<TCrd>(*leftBottomIt, *rightTopIt);
 }
 } // namespace util
 

@@ -170,7 +170,7 @@ namespace util
 /**
  * @brief       Moves the Polygon by the specified horizontal and vertical amounts.
  *
- * @tparam TCrd TCrd The type of coordinates.
+ * @tparam TCrd The type of coordinates.
  * @param poly  The given polygon.
  * @param deltaX The horizontal amounts.
  * @param deltaY The vertical amounts.
@@ -185,6 +185,22 @@ constexpr void move(Polygon<TCrd>& poly, TCrd deltaX, TCrd deltaY) noexcept
     };
     std::ranges::for_each(poly.holes(), std::ref(movePolygon));
 }
+
+/**
+ * @brief       Gets the boundary box of the given polygon.
+ *
+ * @details     The algorithm complexity is O(n).
+ *
+ * @tparam TCrd The type of coordinates.
+ * @param  poly The given polygon.
+ * @return      The boundary box (space::Rect) of the given polygon.
+ */
+template <typename TCrd>
+constexpr space::Rect<TCrd> boundaryBoxOf(const Polygon<TCrd>& poly) noexcept
+{
+    return boundaryBoxOf(poly.boundary());
+}
+
 } // namespace util
 
 /**

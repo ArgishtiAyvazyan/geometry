@@ -63,9 +63,19 @@ public:
      * @param   height A value greater than or equal to 0 that specifies the Height of the Size structure.
      */
     constexpr Rect(const TPoint& pos, TCoordinate width, TCoordinate height) noexcept
-        : m_pos {pos}
-        , m_width {width}
-        , m_height {height}
+        : m_pos {pos}, m_width {width}, m_height {height}
+    {
+    }
+
+    /**
+     * @brief   Initializes a new instance of the Rect structure that has the specified
+     *          bottom-left corner location and the specified top-right corner location.
+     *
+     * @param leftBottom    A point that specifies the location of the bottom-left corner of the rectangle.
+     * @param rightTop      A point that specifies the location of the top-right corner of the rectangle.
+     */
+    constexpr Rect(const TPoint& leftBottom, const TPoint& rightTop) noexcept
+        : m_pos {leftBottom}, m_width {rightTop.x() - leftBottom.x()}, m_height {rightTop.y() - leftBottom.y()}
     {
     }
 
