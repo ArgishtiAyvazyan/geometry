@@ -83,11 +83,11 @@ public:
     }
 
     /**
-     * @brief   Gets the const reference to polygon external boundary.
+     * @brief   Gets the const reference to polygon external boundary polygon.
      *
      * @throws  std::out_of_range if the polygon is empty.
      *
-     * @return  The const reference to polygon external boundary.
+     * @return  The const reference to polygon external boundary polygon.
      */
     [[nodiscard]]
     const TSimplePolugon& boundary() const
@@ -100,11 +100,11 @@ public:
     }
 
     /**
-     * @brief   Gets the reference to polygon external boundary.
+     * @brief   Gets the reference to polygon external boundary polygon.
      *
      * @throws  std::out_of_range if the polygon is empty.
      *
-     * @return  The reference to polygon external boundary.
+     * @return  The reference to polygon external boundary polygon.
      */
     [[nodiscard]]
     TSimplePolugon& boundary()
@@ -164,6 +164,28 @@ private:
      */
     space::Vector<TSimplePolugon> m_arrContours;
 }; // class Polygon
+
+namespace util
+{
+/**
+ * @brief       Moves the Polygon by the specified horizontal and vertical amounts.
+ *
+ * @tparam TCrd TCrd The type of coordinates.
+ * @param poly  The given polygon.
+ * @param deltaX The horizontal amounts.
+ * @param deltaY The vertical amounts.
+ */
+template <typename TCrd>
+constexpr void move(Polygon<TCrd>& poly, TCrd deltaX, TCrd deltaY) noexcept
+{
+    move(poly.boundary(), deltaX, deltaY);
+    auto movePolygon = [deltaX, deltaY](auto& simplePoly)
+    {
+        move(simplePoly, deltaX, deltaY);
+    };
+    std::ranges::for_each(poly.holes(), std::ref(movePolygon));
+}
+} // namespace util
 
 /**
  * @brief   The ostream operators for working with streams.

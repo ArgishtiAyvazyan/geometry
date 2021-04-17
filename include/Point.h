@@ -121,7 +121,7 @@ public:
      */
     constexpr void setY(const TCoordinate newY) noexcept
     {
-        m_x = newY;
+        m_y = newY;
     }
 
     /**
@@ -163,6 +163,23 @@ private:
     TCoordinate m_y {0};
 }; // class Point
 
+namespace util
+{
+/**
+ * @brief   Moves given Point by the specified amount.
+ *
+ * @tparam  TCrd The type of coordinates.
+ * @param   point The point for moving.
+ * @param   deltaX The amount to offset the x-coordinate.
+ * @param   deltaY The amount to offset the y-coordinate.
+ */
+template <typename TCrd>
+constexpr void move(Point<TCrd>& point, TCrd deltaX, TCrd deltaY) noexcept
+{
+    point.setX(point.x() + deltaX);
+    point.setY(point.y() + deltaY);
+}
+} // namespace util
 
 /**
  * @brief   The ostream operators for working with streams.

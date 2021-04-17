@@ -131,20 +131,40 @@ TEST_CASE("empty::SimplePolygon", "[space::SimplePolygon]")
     REQUIRE_FALSE (poly1.empty());
 }
 
-TEST_CASE("boundary::SimplePolygon", "[space::SimplePolygon]")
+TEST_CASE("boundaryCurve::SimplePolygon", "[space::SimplePolygon]")
 {
     using Poly = space::SimplePolygon<int32_t>;
     Poly poly;
-    REQUIRE_THROWS (poly.boundary());
+    REQUIRE_THROWS (poly.boundaryCurve());
 
     Poly::TPiecewiseLinearCurve boundary {{0, 0},
                                           {1, 1},
                                           {2, 2}};
 
     Poly poly1 {boundary};
-    REQUIRE(boundary == poly1.boundary());
+    REQUIRE(boundary == poly1.boundaryCurve());
 }
 
+TEST_CASE("move::SimplePolygon", "[space::SimplePolygon]")
+{
+    using Poly = space::SimplePolygon<int32_t>;
+
+    Poly::TPiecewiseLinearCurve boundary {{0, 0},
+                                          {1, 1},
+                                          {2, 2}};
+
+    Poly poly {boundary};
+
+    space::util::move(poly, 12, 12);
+    const auto& changedBoundary = poly.boundaryCurve();
+    REQUIRE (std::ranges::equal(boundary, changedBoundary
+                                , [](auto point1, const auto& point2)
+        {
+            space::util::move(point1, 12, 12);
+            return point1 == point2;
+        }
+                               ));
+}
 
 TEST_CASE("empty::Polygon", "[space::Polygon]")
 {
@@ -225,4 +245,31 @@ TEST_CASE("holes::Polygon", "[space::Polygon]")
     auto spanHoles = poly2.holes();
     REQUIRE_FALSE (spanHoles.empty());
     REQUIRE(std::size(spanHoles) == std::size(holes));
+}
+
+TEST_CASE("move::Polygon", "[space::SimplePolygon]")
+{
+    using Poly = space::Polygon<int32_t>;
+    using SimplePoly = space::SimplePolygon<int32_t>;
+
+    Poly::TSimplePolugon boundary {{{0, 0},
+                                       {1, 1},
+                                       {2, 2}}};
+    space::Vector<SimplePoly> holes;
+    holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
+    holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
+
+    Poly poly {boundary, holes};
+
+    space::util::move(poly, 12, 13);
+
+    auto equal = [](auto point1, const auto& point2)
+    {
+        space::util::move(point1, 12, 13);
+        return point1 == point2;
+    };
+
+    REQUIRE (std::ranges::equal(boundary.boundaryCurve(), poly.boundary().boundaryCurve(), equal));
+
+    REQUIRE (std::ranges::equal(holes, poly.holes(), equal));
 }

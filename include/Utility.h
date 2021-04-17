@@ -13,21 +13,6 @@ namespace space::util
 {
 
 /**
- * @brief   Moves this given Point by the specified amount.
- *
- * @tparam  TCrd The type of coordinates.
- * @param   point The point for moving.
- * @param   deltaX The amount to offset the x-coordinate.
- * @param   deltaY The amount to offset the y-coordinate.
- */
-template <typename TCrd>
-constexpr void move(Point<TCrd>& point, TCrd deltaX, TCrd deltaY) noexcept
-{
-    point.setX(point.x() + deltaX);
-    point.setY(point.y() + deltaY);
-}
-
-/**
  * @brief Moves the orthogonal shape by the specified horizontal and vertical amounts.
  *
  * @tparam TCrd The type of coordinates.

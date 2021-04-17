@@ -88,7 +88,7 @@ public:
      * @return  The const reference to polygon boundary (piecewise linear curve).
      */
     [[nodiscard]]
-    const TPiecewiseLinearCurve& boundary() const
+    const TPiecewiseLinearCurve& boundaryCurve() const
     {
         if (empty())
         {
@@ -105,9 +105,9 @@ public:
      * @return  The reference to polygon boundary (piecewise linear curve).
      */
     [[nodiscard]]
-    TPiecewiseLinearCurve& boundary()
+    TPiecewiseLinearCurve& boundaryCurve()
     {
-        return const_cast<TPiecewiseLinearCurve&>(std::as_const(*this).boundary());
+        return const_cast<TPiecewiseLinearCurve&>(std::as_const(*this).boundaryCurve());
     }
 
 private:
@@ -117,6 +117,28 @@ private:
      */
     TPiecewiseLinearCurve m_piecewiseLinearCurve {};
 }; // class SimplePolygon
+
+
+namespace util
+{
+/**
+ * @brief       Moves the simple polygon by the specified horizontal and vertical amounts.
+ *
+ * @tparam TCrd TCrd The type of coordinates.
+ * @param poly  The given simple polygon.
+ * @param deltaX The horizontal amounts.
+ * @param deltaY The vertical amounts.
+ */
+template <typename TCrd>
+constexpr void move(SimplePolygon<TCrd>& poly, TCrd deltaX, TCrd deltaY) noexcept
+{
+    auto movePoint = [deltaX, deltaY](auto& point)
+    {
+        move(point, deltaX, deltaY);
+    };
+    std::ranges::for_each(poly.boundaryCurve(), std::ref(movePoint));
+}
+} // namespace util
 
 /**
  * @brief   The ostream operators for working with streams.
@@ -133,7 +155,7 @@ template <typename TOstream, typename TCrd>
 TOstream& operator<<(TOstream& os, const space::SimplePolygon<TCrd>& poly)
 {
     os << "SimplePolygon { ";
-    std::ranges::copy(poly.boundary(), std::ostream_iterator<space::Point<TCrd>>(os, ", "));
+    std::ranges::copy(poly.boundaryCurve(), std::ostream_iterator<space::Point<TCrd>>(os, ", "));
     os << "}";
     return os;
 }
