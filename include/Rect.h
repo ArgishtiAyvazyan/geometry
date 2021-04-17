@@ -253,7 +253,7 @@ namespace util
  */
 template <typename TCrd>
 [[nodiscard]]
-constexpr space::Point<TCrd> topLeft(const Rect<TCrd>& rect) noexcept
+constexpr space::Point<TCrd> topLeftOf(const Rect<TCrd>& rect) noexcept
 {
     return {rect.pos().x(), rect.pos.y() + rect.height()};
 }
@@ -267,7 +267,7 @@ constexpr space::Point<TCrd> topLeft(const Rect<TCrd>& rect) noexcept
  */
 template <typename TCrd>
 [[nodiscard]]
-constexpr space::Point<TCrd>  topRight(const Rect<TCrd>& rect) noexcept
+constexpr space::Point<TCrd> topRightOf(const Rect<TCrd>& rect) noexcept
 {
     return {rect.pos().x() + rect.width(), rect.pos().y() + rect.height()};
 }
@@ -281,7 +281,7 @@ constexpr space::Point<TCrd>  topRight(const Rect<TCrd>& rect) noexcept
  */
 template <typename TCrd>
 [[nodiscard]]
-constexpr space::Point<TCrd> bottomLeft(const Rect<TCrd>& rect) noexcept
+constexpr space::Point<TCrd> bottomLeftOf(const Rect<TCrd>& rect) noexcept
 {
     return rect.pos();
 }
@@ -295,7 +295,7 @@ constexpr space::Point<TCrd> bottomLeft(const Rect<TCrd>& rect) noexcept
  */
 template <typename TCrd>
 [[nodiscard]]
-constexpr space::Point<TCrd> bottomRight(const Rect<TCrd>& rect) noexcept
+constexpr space::Point<TCrd> bottomRightOf(const Rect<TCrd>& rect) noexcept
 {
     return {rect.pos().x() + rect.width(), rect.pos().y()};
 }

@@ -74,10 +74,10 @@ constexpr TRetVal distance(const Point<TCrd>& first, const Point<TCrd>& second) 
 [[nodiscard]]
 constexpr bool hesIntersect(const TOrthogonalShape1& first, const TOrthogonalShape2& second) noexcept
 {
-    const auto[firstX1, firstY1] = bottomLeft(first);
-    const auto[firstX2, firstY2] = topRight(first);
-    const auto[secondX1, secondY1] = bottomLeft(second);
-    const auto[secondX2, secondY2] = topRight(second);
+    const auto[firstX1, firstY1] = bottomLeftOf(first);
+    const auto[firstX2, firstY2] = topRightOf(first);
+    const auto[secondX1, secondY1] = bottomLeftOf(second);
+    const auto[secondX2, secondY2] = topRightOf(second);
 
     return firstX2 >= secondX1 && secondX2 >= firstX1 && firstY2 >= secondY1 && secondY2 >= firstY1;
 }
@@ -95,8 +95,8 @@ template <typename TOrthogonalShape, typename TCrd>
 [[nodiscard]]
 constexpr bool contains(const TOrthogonalShape& rect, const Point<TCrd>& point) noexcept
 {
-    const auto[x1, y1] = bottomLeft(rect);
-    const auto[x2, y2] = topRight(rect);
+    const auto[x1, y1] = bottomLeftOf(rect);
+    const auto[x2, y2] = topRightOf(rect);
     const auto[px, py] = point;
     return ((x1 <= px) && (px <= x2) && (y1 <= py) && (py <= y2));
 }
@@ -127,7 +127,7 @@ template <typename TOrthogonalShape1, typename TOrthogonalShape2>
 constexpr bool contains(const TOrthogonalShape1& firstShape, const TOrthogonalShape2& secondShape) noexcept
 {
     return space::util::contains(firstShape, secondShape.pos())
-           && space::util::contains(firstShape, space::util::topRight(secondShape));
+           && space::util::contains(firstShape, space::util::topRightOf(secondShape));
 }
 
 

@@ -28,8 +28,8 @@ auto spaceToBoostRect(const space::Rect<TCrd>& rect)
     using point = boost::geometry::model::point<TCrd, 2, boost::geometry::cs::cartesian>;
     using box = boost::geometry::model::box<point>;
 
-    const auto[x1, y1] = space::util::bottomLeft(rect);
-    const auto[x2, y2] = space::util::topRight(rect);
+    const auto[x1, y1] = space::util::bottomLeftOf(rect);
+    const auto[x2, y2] = space::util::topRightOf(rect);
     return box(point(x1, y1), point(x2, y2));
 }
 
@@ -58,8 +58,8 @@ TEST_CASE("Create::Rect", "[space::util]")
 
     space::Rect<int32_t> rect {leftBottom, rightTop};
 
-    REQUIRE (space::util::bottomLeft(rect) == leftBottom);
-    REQUIRE (space::util::topRight(rect) == rightTop);
+    REQUIRE (space::util::bottomLeftOf(rect) == leftBottom);
+    REQUIRE (space::util::topRightOf(rect) == rightTop);
 }
 
 

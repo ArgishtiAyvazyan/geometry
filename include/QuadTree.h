@@ -334,7 +334,7 @@ private:
      */
     void creatRoot(const TKey& key)
     {
-        const auto[x, y] = space::util::topRight(key);
+        const auto[x, y] = space::util::topRightOf(key);
         auto regionSize = static_cast<int32_t>(std::pow(2, static_cast<int32_t>(std::log2(std::max(x, y))) + 1));
         if (0 == regionSize)
         {

@@ -202,7 +202,7 @@ namespace util
  */
 template <typename TCrd>
 [[nodiscard]]
-constexpr space::Point<TCrd> topLeft(const Square<TCrd>& square) noexcept
+constexpr space::Point<TCrd> topLeftOf(const Square<TCrd>& square) noexcept
 {
     return {square.pos().x(), square.pos.y() + square.size()};
 }
@@ -216,7 +216,7 @@ constexpr space::Point<TCrd> topLeft(const Square<TCrd>& square) noexcept
  */
 template <typename TCrd>
 [[nodiscard]]
-constexpr space::Point<TCrd> topRight(const Square<TCrd>& square) noexcept
+constexpr space::Point<TCrd> topRightOf(const Square<TCrd>& square) noexcept
 {
     return {square.pos().x() + square.size(), square.pos().y() + square.size()};
 }
@@ -230,7 +230,7 @@ constexpr space::Point<TCrd> topRight(const Square<TCrd>& square) noexcept
  */
 template <typename TCrd>
 [[nodiscard]]
-constexpr space::Point<TCrd> bottomLeft(const Square<TCrd>& square) noexcept
+constexpr space::Point<TCrd> bottomLeftOf(const Square<TCrd>& square) noexcept
 {
     return square.pos();
 }
@@ -244,7 +244,7 @@ constexpr space::Point<TCrd> bottomLeft(const Square<TCrd>& square) noexcept
  */
 template <typename TCrd>
 [[nodiscard]]
-constexpr space::Point<TCrd> bottomRight(const Square<TCrd>& square) noexcept
+constexpr space::Point<TCrd> bottomRightOf(const Square<TCrd>& square) noexcept
 {
     return {square.pos().x() + square.size(), square.pos().y()};
 }

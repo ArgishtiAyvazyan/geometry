@@ -24,8 +24,8 @@ auto spaceToBoostRect(const space::Rect<TCrd>& rect)
     using point = boost::geometry::model::point<TCrd, 2, boost::geometry::cs::cartesian>;
     using box = boost::geometry::model::box<point>;
 
-    const auto[x1, y1] = space::util::bottomLeft(rect);
-    const auto[x2, y2] = space::util::topRight(rect);
+    const auto[x1, y1] = space::util::bottomLeftOf(rect);
+    const auto[x2, y2] = space::util::topRightOf(rect);
     return box(point(x1, y1), point(x2, y2));
 }
 
@@ -110,8 +110,8 @@ void queryTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
         index.query(queryRect, std::back_inserter(quadTreeQueryRes));
 
 
-        const auto[x1, y1] = space::util::bottomLeft(queryRect);
-        const auto[x2, y2] = space::util::topRight(queryRect);
+        const auto[x1, y1] = space::util::bottomLeftOf(queryRect);
+        const auto[x2, y2] = space::util::topRightOf(queryRect);
         box queryBox(point(x1, y1), point(x2, y2));
         std::vector<value> rTreeQueryRes;
         rtree.query(boost::geometry::index::intersects(queryBox), std::back_inserter(rTreeQueryRes));
