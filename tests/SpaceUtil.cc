@@ -18,6 +18,7 @@
 
 #include "Rect.h"
 #include "Square.h"
+#include "SimplePolygon.h"
 #include "Polygon.h"
 #include "Utility.h"
 
@@ -118,21 +119,50 @@ TEST_CASE("Intersects::Square", "[space::Rect]")
     REQUIRE_FALSE(space::util::hesIntersect(rect1, rect));
 }
 
+TEST_CASE("empty::SimplePolygon", "[space::SimplePolygon]")
+{
+    using Poly = space::SimplePolygon<int32_t>;
+    Poly poly;
+    REQUIRE (poly.empty());
+    Poly::TPiecewiseLinearCurve boundary {{0, 0},
+                                          {1, 1},
+                                          {2, 2}};
+    Poly poly1 {boundary};
+    REQUIRE_FALSE (poly1.empty());
+}
+
+TEST_CASE("boundary::SimplePolygon", "[space::SimplePolygon]")
+{
+    using Poly = space::SimplePolygon<int32_t>;
+    Poly poly;
+    REQUIRE_THROWS (poly.boundary());
+
+    Poly::TPiecewiseLinearCurve boundary {{0, 0},
+                                          {1, 1},
+                                          {2, 2}};
+
+    Poly poly1 {boundary};
+    REQUIRE(boundary == poly1.boundary());
+}
+
+
 TEST_CASE("empty::Polygon", "[space::Polygon]")
 {
     using Poly = space::Polygon<int32_t>;
+    using SimplePoly = space::SimplePolygon<int32_t>;
     Poly poly;
     REQUIRE (poly.empty());
     REQUIRE_FALSE (poly.hasHoles());
-    Poly::TContour boundary {{0, 0},
-                             {1, 1},
-                             {2, 2}};
+    Poly::TSimplePolugon boundary {{{0, 0},
+                                       {1, 1},
+                                       {2, 2}}};
     Poly poly1 {boundary};
     REQUIRE_FALSE (poly1.empty());
     REQUIRE_FALSE (poly1.hasHoles());
 
-    space::Vector<Poly::TContour> holes {{{3, 3}, {1, 1}, {2, 2}},
-                                         {{6, 6}, {3, 3}, {9, 9}}};
+    space::Vector<SimplePoly> holes;
+    holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
+    holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
 
     Poly poly2 {boundary, holes};
     REQUIRE_FALSE (poly2.empty());
@@ -142,13 +172,16 @@ TEST_CASE("empty::Polygon", "[space::Polygon]")
 TEST_CASE("hasHoles::Polygon", "[space::Polygon]")
 {
     using Poly = space::Polygon<int32_t>;
+    using SimplePoly = space::SimplePolygon<int32_t>;
+
     Poly poly;
     REQUIRE_FALSE (poly.hasHoles());
-    Poly::TContour boundary {{0, 0},
-                             {1, 1},
-                             {2, 2}};
-    space::Vector<Poly::TContour> holes {{{3, 3}, {1, 1}, {2, 2}},
-                                         {{6, 6}, {3, 3}, {9, 9}}};
+    Poly::TSimplePolugon boundary {{{0, 0},
+                                       {1, 1},
+                                       {2, 2}}};
+    space::Vector<SimplePoly> holes;
+    holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
+    holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
 
     Poly poly1 {boundary, holes};
     REQUIRE_FALSE (poly1.empty());
@@ -158,12 +191,13 @@ TEST_CASE("hasHoles::Polygon", "[space::Polygon]")
 TEST_CASE("boundary::Polygon", "[space::Polygon]")
 {
     using Poly = space::Polygon<int32_t>;
+
     Poly poly;
     REQUIRE_THROWS (poly.boundary());
 
-    Poly::TContour boundary {{0, 0},
-                             {1, 1},
-                             {2, 2}};
+    Poly::TSimplePolugon boundary {{{0, 0},
+                                       {1, 1},
+                                       {2, 2}}};
 
     Poly poly1 {boundary};
     REQUIRE(boundary == poly1.boundary());
@@ -172,17 +206,20 @@ TEST_CASE("boundary::Polygon", "[space::Polygon]")
 TEST_CASE("holes::Polygon", "[space::Polygon]")
 {
     using Poly = space::Polygon<int32_t>;
+    using SimplePoly = space::SimplePolygon<int32_t>;
+
     Poly poly;
     REQUIRE (poly.holes().empty());
 
-    Poly::TContour boundary {{0, 0},
-                             {1, 1},
-                             {2, 2}};
+    Poly::TSimplePolugon boundary {{{0, 0},
+                                       {1, 1},
+                                       {2, 2}}};
     Poly poly1 {boundary};
     REQUIRE (poly1.holes().empty());
 
-    space::Vector<Poly::TContour> holes {{{3, 3}, {1, 1}, {2, 2}},
-                                         {{6, 6}, {3, 3}, {9, 9}}};
+    space::Vector<SimplePoly> holes;
+    holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
+    holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
 
     Poly poly2 {boundary, holes};
     auto spanHoles = poly2.holes();

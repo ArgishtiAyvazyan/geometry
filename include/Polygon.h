@@ -13,17 +13,16 @@
 
 #include "Definitions.h"
 #include "Point.h"
+#include "SimplePolygon.h"
 
 namespace space
 {
 
 /**
  * @class   Polygon
- * @brief   The c++ representation of polygon.
- *          the polygon is a region of the plane bounded with the self-intersecting
- *          or non-self-intersecting piecewise linear curve.
- *
- * @details The polygon is represented by a collection of contours (\ref TContour).
+ * @brief   The c++ representation of polygon with holes.
+ *          A polygon with holes is an area-connected simple polygon with one
+ *          external boundary and one or more interior boundaries (holes).
  *
  * @tparam  TCrd The type of coordinate.
  */
@@ -38,12 +37,9 @@ public:
     using TCoordinate = TCrd;
 
     /**
-     * @brief   Contour is a set of points places on a plane.
-     *
-     * @details Points in Contour are always in clockwise order.
+     * @brief   The type simple polygon.
      */
-    using TContour = space::Vector<space::Point<TCoordinate>>;
-
+    using TSimplePolugon = space::SimplePolygon<TCoordinate>;
 public:
 
 
@@ -61,12 +57,12 @@ public:
 
     /**
      * @brief           Initializes a new instance of the Polygon structure
-     *                  that has the specified boundary and holes.
+     *                  that has the specified external boundary and interior boundaries (holes).
      *
-     * @param boundary  The boundary of the polygon.
-     * @param holes     The collections of holes boundary.
+     * @param boundary  A simple polygon representing an external boundary for a polygon with holes.
+     * @param holes     A set of simple polygon representing an interior boundaries (holes) for a polygon with holes.
      */
-    constexpr explicit Polygon(TContour boundary, space::Vector<TContour> holes = {})
+    constexpr explicit Polygon(TSimplePolugon boundary, space::Vector<TSimplePolugon> holes = {})
         : m_arrContours {}
     {
         m_arrContours.reserve(std::size(holes) + 1);
@@ -76,7 +72,7 @@ public:
 
 
     /**
-     * @brief   Checks the polygon has contours or not.
+     * @brief   Checks the polygon has external boundary or not.
      *
      * @return  true if has, otherwise false.
      */
@@ -87,14 +83,14 @@ public:
     }
 
     /**
-     * @brief   Gets the const reference to polygon boundary contour.
+     * @brief   Gets the const reference to polygon external boundary.
      *
      * @throws  std::out_of_range if the polygon is empty.
      *
-     * @return  The const reference to polygon boundary contour
+     * @return  The const reference to polygon external boundary.
      */
     [[nodiscard]]
-    const TContour& boundary() const
+    const TSimplePolugon& boundary() const
     {
         if (empty())
         {
@@ -104,20 +100,20 @@ public:
     }
 
     /**
-     * @brief   Gets the reference to polygon boundary contour.
+     * @brief   Gets the reference to polygon external boundary.
      *
      * @throws  std::out_of_range if the polygon is empty.
      *
-     * @return  The reference to polygon boundary contour
+     * @return  The reference to polygon external boundary.
      */
     [[nodiscard]]
-    TContour& boundary()
+    TSimplePolugon& boundary()
     {
-        return const_cast<TContour&>(std::as_const(*this).boundary());
+        return const_cast<TSimplePolugon&>(std::as_const(*this).boundary());
     }
 
     /**
-     * @brief   Checks the polygon has holes or not.
+     * @brief   Checks the polygon has interior boundaries (holes) or not.
      *
      * @return  true if has, otherwise false.
      */
@@ -128,35 +124,35 @@ public:
     }
 
     /**
-     * @brief   Gets the const span to the holes collection.
+     * @brief   Gets the const span to the interior boundaries (holes) collection.
      *          If the polygon hasn't holes returns empty span.
      *
      * @return  The const span on the holes collection.
      */
     [[nodiscard]]
-    space::Span<const TContour> holes() const noexcept
+    space::Span<const TSimplePolugon> holes() const noexcept
     {
         if (!hasHoles())
         {
             return {};
         }
-        return space::Span<const TContour> {m_arrContours}.subspan(1, std::size(m_arrContours) - 1);
+        return space::Span<const TSimplePolugon> {m_arrContours}.subspan(1, std::size(m_arrContours) - 1);
     }
 
     /**
-     * @brief   Gets the span to the holes collection.
+     * @brief   Gets the span to the interior boundaries (holes) collection.
      *          If the polygon hasn't holes returns empty span.
      *
      * @return  The span on the holes collection.
      */
     [[nodiscard]]
-    space::Span<TContour> holes() noexcept
+    space::Span<TSimplePolugon> holes() noexcept
     {
         if (!hasHoles())
         {
             return {};
         }
-        return space::Span<TContour> {m_arrContours}.subspan(1, std::size(m_arrContours) - 1);
+        return space::Span<TSimplePolugon> {m_arrContours}.subspan(1, std::size(m_arrContours) - 1);
     }
 
 
@@ -166,7 +162,7 @@ private:
      * @brief   The polygon representation by polygons. The first item represents
      *          the polygon outside boundaries the others represent holes.
      */
-    space::Vector<TContour> m_arrContours;
+    space::Vector<TSimplePolugon> m_arrContours;
 }; // class Polygon
 
 /**
@@ -184,13 +180,13 @@ template <typename TOstream, typename TCrd>
 TOstream& operator<<(TOstream& os, const space::Polygon<TCrd>& poly)
 {
     os << "Polygon { Boundary: { ";
-    std::ranges::copy(poly.boundary(), std::ostream_iterator<space::Point<TCrd>>(os, ", "));
+    os << poly.boundary();
     if (poly.hasHoles())
     {
         for (auto& hole : poly.holes())
         {
             os << " } Hole: { ";
-            std::ranges::copy(hole, std::ostream_iterator<space::Point<TCrd>>(os, ", "));
+            os << hole;
         }
     }
     os << " } }";
@@ -198,6 +194,3 @@ TOstream& operator<<(TOstream& os, const space::Polygon<TCrd>& poly)
 }
 
 } // namespace space
-
-
-
