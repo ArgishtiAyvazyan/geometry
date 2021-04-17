@@ -12,6 +12,7 @@
 #include <array>
 #include <vector>
 #include <stack>
+#include <span>
 #include <boost/container/flat_set.hpp>
 
 namespace space
@@ -19,13 +20,16 @@ namespace space
     template <typename ... T>
     using Vector = std::vector<T...>;
 
-    template <typename T, std::size_t N>
-    using Array = std::array<T, N>;
+template <typename T, std::size_t N>
+using Array = std::array<T, N>;
 
-    template <typename ... T>
-    using FlatSet = boost::container::flat_set<T...>;
+template <typename ... T>
+using FlatSet = boost::container::flat_set<T...>;
 
-    template <typename ... T>
-    using Stack = std::stack<T...>;
+template <typename ... T>
+using Stack = std::stack<T...>;
+
+template <typename ... T>
+using Span = std::span<T...>;
 
 } // namespace space

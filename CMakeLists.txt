@@ -138,14 +138,14 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # using GCC
     # lots of warnings and all warnings as errors
     add_compile_options(
-            -finstrument-functions -fpermissive -fverbose-asm -pedantic -Waddress -Wall -Warray-bounds=1 -Wbool-compare -Wbool-operation -Wc++11-compat
-            -Wc++14-compat -Wc++17-compat -Wcast-align -Wcast-qual -Wcatch-value -Wchar-subscripts -Wcomment -Wconversion -Wenum-compare -Werror -Wextra -Wfloat-equal -Wformat
+            -finstrument-functions -fpermissive -fverbose-asm -pedantic -Waddress -Wall -Warray-bounds=1 -Wbool-compare -Wbool-operation
+            -Wcast-align -Wcast-qual -Wcatch-value -Wchar-subscripts -Wcomment -Wconversion -Wenum-compare -Werror -Wextra -Wfloat-equal -Wformat
             -Winit-self -Wint-in-bool-context -Wlogical-not-parentheses -Wmain -Wmaybe-uninitialized -Wmemset-elt-size -Wmemset-transposed-args -Wmisleading-indentation
             -Wmissing-attributes -Wmultistatement-macros -Wnarrowing -Wnonnull -Wnonnull-compare -Wopenmp-simd -Wparentheses -Wpessimizing-move -Wpointer-arith -Wreorder -Wrestrict
             -Wreturn-type -Wsequence-point -Wshadow -Wsign-compare -Wsizeof-pointer-div -Wsizeof-pointer-memaccess -Wstrict-aliasing -Wstrict-overflow=1 -Wstrict-overflow=5 -Wswitch
             -Wswitch-enum -Wtautological-compare -Wtrigraphs -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunused-function -Wunused-label -Wunused-value -Wunused-variable
             -Wvolatile-register-var -Wwrite-strings -fcoroutines
-#            switch-default
+            #            switch-default
     )
 
     set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g")

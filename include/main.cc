@@ -3,3 +3,4 @@
 #include "Square.h"
 #include "Utility.h"
 #include "QuadTree.h"
+#include "Polygon.h"

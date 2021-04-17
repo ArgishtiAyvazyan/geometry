@@ -7,6 +7,7 @@
  */
 
 #define CATCH_CONFIG_MAIN
+
 #include <catch2/catch.hpp>
 
 #include <boost/geometry/geometries/point.hpp>
@@ -17,6 +18,7 @@
 
 #include "Rect.h"
 #include "Square.h"
+#include "Polygon.h"
 #include "Utility.h"
 
 template <typename TCrd>
@@ -32,8 +34,8 @@ auto spaceToBoostRect(const space::Rect<TCrd>& rect)
 
 TEST_CASE("Cover::Rect::point", "[space::util]")
 {
-    space::Rect<int32_t> rect { {0, 0}, 100, 100 };
-    space::Point<int32_t> point { 50, 50 };
+    space::Rect<int32_t> rect {{0, 0}, 100, 100};
+    space::Point<int32_t> point {50, 50};
     REQUIRE (space::util::contains(rect, point));
     space::util::move(point, 100, 100);
     REQUIRE_FALSE (space::util::contains(rect, point));
@@ -41,8 +43,8 @@ TEST_CASE("Cover::Rect::point", "[space::util]")
 
 TEST_CASE("Cover::Rect", "[space::util]")
 {
-    space::Rect<int32_t> rect1 { {0, 0}, 100, 100 };
-    space::Rect<int32_t> rect2 { {50, 50}, 10, 10 };
+    space::Rect<int32_t> rect1 {{0, 0}, 100, 100};
+    space::Rect<int32_t> rect2 {{50, 50}, 10, 10};
     REQUIRE (space::util::contains(rect1, rect2));
     space::util::move(rect2, 100, 100);
     REQUIRE_FALSE (space::util::contains(rect1, rect2));
@@ -50,8 +52,8 @@ TEST_CASE("Cover::Rect", "[space::util]")
 
 TEST_CASE("Cover::Square::point", "[space::util]")
 {
-    space::Square<int32_t> rect { {0, 0}, 100 };
-    space::Point<int32_t> point { 50, 50 };
+    space::Square<int32_t> rect {{0, 0}, 100};
+    space::Point<int32_t> point {50, 50};
     REQUIRE (space::util::contains(rect, point));
     space::util::move(point, 100, 100);
     REQUIRE_FALSE (space::util::contains(rect, point));
@@ -59,8 +61,8 @@ TEST_CASE("Cover::Square::point", "[space::util]")
 
 TEST_CASE("Cover::Square", "[space::util]")
 {
-    space::Square<int32_t> rect1 { {0, 0}, 100 };
-    space::Rect<int32_t> rect2 { {50, 50}, 10, 10 };
+    space::Square<int32_t> rect1 {{0, 0}, 100};
+    space::Rect<int32_t> rect2 {{50, 50}, 10, 10};
     REQUIRE (space::util::contains(rect1, rect2));
     space::util::move(rect2, 100, 100);
     REQUIRE_FALSE (space::util::contains(rect1, rect2));
@@ -97,7 +99,7 @@ TEST_CASE("Intersects::Rect", "[space::util]")
     }
 }
 
-TEST_CASE("Intersects::Square", "[R-Tree::Rect]")
+TEST_CASE("Intersects::Square", "[space::Rect]")
 {
     space::Rect<int32_t> rect {{50, 13}, 100, 100};
     space::Square<int32_t> rect1 {{0, 0}, 123};
@@ -114,4 +116,76 @@ TEST_CASE("Intersects::Square", "[R-Tree::Rect]")
 
     REQUIRE_FALSE(space::util::hesIntersect(rect, rect1));
     REQUIRE_FALSE(space::util::hesIntersect(rect1, rect));
+}
+
+TEST_CASE("empty::Polygon", "[space::Polygon]")
+{
+    using Poly = space::Polygon<int32_t>;
+    Poly poly;
+    REQUIRE (poly.empty());
+    REQUIRE_FALSE (poly.hasHoles());
+    Poly::TContour boundary {{0, 0},
+                             {1, 1},
+                             {2, 2}};
+    Poly poly1 {boundary};
+    REQUIRE_FALSE (poly1.empty());
+    REQUIRE_FALSE (poly1.hasHoles());
+
+    space::Vector<Poly::TContour> holes {{{3, 3}, {1, 1}, {2, 2}},
+                                         {{6, 6}, {3, 3}, {9, 9}}};
+
+    Poly poly2 {boundary, holes};
+    REQUIRE_FALSE (poly2.empty());
+    REQUIRE (poly2.hasHoles());
+}
+
+TEST_CASE("hasHoles::Polygon", "[space::Polygon]")
+{
+    using Poly = space::Polygon<int32_t>;
+    Poly poly;
+    REQUIRE_FALSE (poly.hasHoles());
+    Poly::TContour boundary {{0, 0},
+                             {1, 1},
+                             {2, 2}};
+    space::Vector<Poly::TContour> holes {{{3, 3}, {1, 1}, {2, 2}},
+                                         {{6, 6}, {3, 3}, {9, 9}}};
+
+    Poly poly1 {boundary, holes};
+    REQUIRE_FALSE (poly1.empty());
+    REQUIRE (poly1.hasHoles());
+}
+
+TEST_CASE("boundary::Polygon", "[space::Polygon]")
+{
+    using Poly = space::Polygon<int32_t>;
+    Poly poly;
+    REQUIRE_THROWS (poly.boundary());
+
+    Poly::TContour boundary {{0, 0},
+                             {1, 1},
+                             {2, 2}};
+
+    Poly poly1 {boundary};
+    REQUIRE(boundary == poly1.boundary());
+}
+
+TEST_CASE("holes::Polygon", "[space::Polygon]")
+{
+    using Poly = space::Polygon<int32_t>;
+    Poly poly;
+    REQUIRE (poly.holes().empty());
+
+    Poly::TContour boundary {{0, 0},
+                             {1, 1},
+                             {2, 2}};
+    Poly poly1 {boundary};
+    REQUIRE (poly1.holes().empty());
+
+    space::Vector<Poly::TContour> holes {{{3, 3}, {1, 1}, {2, 2}},
+                                         {{6, 6}, {3, 3}, {9, 9}}};
+
+    Poly poly2 {boundary, holes};
+    auto spanHoles = poly2.holes();
+    REQUIRE_FALSE (spanHoles.empty());
+    REQUIRE(std::size(spanHoles) == std::size(holes));
 }
