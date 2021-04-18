@@ -5,3 +5,4 @@
 #include "QuadTree.h"
 #include "SimplePolygon.h"
 #include "Polygon.h"
+#include "Segment.h"

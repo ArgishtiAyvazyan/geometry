@@ -55,6 +55,8 @@ public:
 
     constexpr Polygon& operator=(const Polygon&) noexcept = default;
 
+    /* constexpr */ std::strong_ordering operator<=>(const Polygon<TCrd>&) const noexcept = default;
+
     /**
      * @brief           Initializes a new instance of the Polygon structure
      *                  that has the specified external boundary and interior boundaries (holes).

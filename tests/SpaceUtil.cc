@@ -20,6 +20,7 @@
 #include "Square.h"
 #include "SimplePolygon.h"
 #include "Polygon.h"
+#include "Segment.h"
 #include "Utility.h"
 
 template <typename TCrd>
@@ -31,6 +32,17 @@ auto spaceToBoostRect(const space::Rect<TCrd>& rect)
     const auto[x1, y1] = space::util::bottomLeftOf(rect);
     const auto[x2, y2] = space::util::topRightOf(rect);
     return box(point(x1, y1), point(x2, y2));
+}
+
+TEST_CASE("Compare::Point", "[space::Point]")
+{
+    space::Point<int32_t> point {50, 13};
+    space::Point<int32_t> point1 {0, 0};
+
+    REQUIRE(point == point);
+    REQUIRE_FALSE(point != point);
+    REQUIRE_FALSE(point == point1);
+    REQUIRE(point != point1);
 }
 
 TEST_CASE("Cover::Rect::point", "[space::util]")
@@ -60,6 +72,18 @@ TEST_CASE("Create::Rect", "[space::util]")
 
     REQUIRE (space::util::bottomLeftOf(rect) == leftBottom);
     REQUIRE (space::util::topRightOf(rect) == rightTop);
+}
+
+
+TEST_CASE("Compare::Rect", "[space::Rect]")
+{
+    space::Rect<int32_t> rect {{50, 13}, 100, 100};
+    space::Rect<int32_t> rect1 {{0, 0}, 123, 123};
+
+    REQUIRE(rect == rect);
+    REQUIRE_FALSE(rect != rect);
+    REQUIRE_FALSE(rect == rect1);
+    REQUIRE(rect != rect1);
 }
 
 
@@ -112,7 +136,7 @@ TEST_CASE("Intersects::Rect", "[space::util]")
     }
 }
 
-TEST_CASE("Intersects::Square", "[space::Rect]")
+TEST_CASE("Intersects::Square", "[space::Square]")
 {
     space::Rect<int32_t> rect {{50, 13}, 100, 100};
     space::Square<int32_t> rect1 {{0, 0}, 123};
@@ -129,6 +153,17 @@ TEST_CASE("Intersects::Square", "[space::Rect]")
 
     REQUIRE_FALSE(space::util::hesIntersect(rect, rect1));
     REQUIRE_FALSE(space::util::hesIntersect(rect1, rect));
+}
+
+TEST_CASE("Compare::Square", "[space::Square]")
+{
+    space::Square<int32_t> square {{50, 13}, 100};
+    space::Square<int32_t> square1 {{0, 0}, 123};
+
+    REQUIRE(square == square);
+    REQUIRE_FALSE(square != square);
+    REQUIRE_FALSE(square == square1);
+    REQUIRE(square != square1);
 }
 
 TEST_CASE("empty::SimplePolygon", "[space::SimplePolygon]")
@@ -193,6 +228,25 @@ TEST_CASE("boundaryBoxOf::SimplePolygon", "[space::SimplePolygon]")
     const auto bBox = space::util::boundaryBoxOf(poly);
     REQUIRE(bBox == Rect {{0,   0},
                           {124, 444}});
+}
+
+TEST_CASE("Compare::SimplePolygon", "[space::SimplePolygon]")
+{
+    using Poly = space::SimplePolygon<int32_t>;
+
+    Poly::TPiecewiseLinearCurve boundary {{{0, 0},
+                                              {1, 1},
+                                              {12, 14},
+                                              {124, 444},
+                                              {2, 2}}};
+
+    Poly poly {boundary};
+    Poly poly1;
+
+    REQUIRE(poly == poly);
+    REQUIRE_FALSE(poly != poly);
+    REQUIRE_FALSE(poly == poly1);
+    REQUIRE(poly != poly1);
 }
 
 TEST_CASE("empty::Polygon", "[space::Polygon]")
@@ -276,7 +330,7 @@ TEST_CASE("holes::Polygon", "[space::Polygon]")
     REQUIRE(std::size(spanHoles) == std::size(holes));
 }
 
-TEST_CASE("move::Polygon", "[space::SimplePolygon]")
+TEST_CASE("move::Polygon", "[space::Polygon]")
 {
     using Poly = space::Polygon<int32_t>;
     using SimplePoly = space::SimplePolygon<int32_t>;
@@ -303,7 +357,7 @@ TEST_CASE("move::Polygon", "[space::SimplePolygon]")
     REQUIRE (std::ranges::equal(holes, poly.holes(), equal));
 }
 
-TEST_CASE("boundaryBoxOf::Polygon", "[space::SimplePolygon]")
+TEST_CASE("boundaryBoxOf::Polygon", "[space::Polygon]")
 {
     using Poly = space::Polygon<int32_t>;
     using Rect = space::Rect<int32_t>;
@@ -323,4 +377,63 @@ TEST_CASE("boundaryBoxOf::Polygon", "[space::SimplePolygon]")
     const auto bBox = space::util::boundaryBoxOf(poly);
     REQUIRE(bBox == Rect {{0,   0},
                           {124, 444}});
+}
+
+TEST_CASE("Compare::Polygon", "[space::Polygon]")
+{
+    using Poly = space::Polygon<int32_t>;
+    using SimplePoly = Poly::TSimplePolugon;
+
+    SimplePoly boundary {{{0, 0},
+                             {1, 1},
+                             {12, 14},
+                             {124, 444},
+                             {2, 2}}};
+
+    space::Vector<SimplePoly> holes;
+    holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
+    holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
+
+    Poly poly {boundary, holes};
+
+    Poly poly1;
+    REQUIRE(poly == poly);
+    REQUIRE_FALSE(poly != poly);
+    REQUIRE_FALSE(poly == poly1);
+    REQUIRE(poly != poly1);
+}
+
+TEST_CASE("Simple::Segment", "[space::Segment]")
+{
+    using Point = space::Point<int32_t>;
+    using Segment = space::Segment<int32_t>;
+
+    Point p1 {1, 1};
+    Point p2 {4, 4};
+    Segment segment {p1, p2};
+
+    REQUIRE(p1 == segment.first);
+    REQUIRE(p2 == segment.second);
+
+    Segment segment2 {{3, 3},
+                      {5, 5}};
+    REQUIRE(Point {3, 3} == segment2.first);
+    REQUIRE(Point {5, 5} == segment2.second);
+}
+
+
+TEST_CASE("Compare::Segment", "[space::Segment]")
+{
+    using Point = space::Point<int32_t>;
+    using Segment = space::Segment<int32_t>;
+
+    Point p1 {1, 1};
+    Point p2 {4, 4};
+    Segment segment {p1, p2};
+    Segment segment2 {p2, p1};
+
+    REQUIRE(segment == segment);
+    REQUIRE_FALSE(segment != segment);
+    REQUIRE_FALSE(segment == segment2);
+    REQUIRE(segment != segment2);
 }
