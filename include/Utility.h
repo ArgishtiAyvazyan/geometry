@@ -45,7 +45,7 @@ constexpr TRetVal distance(const Point<TCrd>& first, const Point<TCrd>& second) 
 }
 
 /**
- * @brief Returns true if the given rectangles hesIntersects
+ * @brief Returns true if the given rectangles hes intersects
  *          (i.e., there is at least one pixel that is within both rectangles),
  *          otherwise returns false.
  *

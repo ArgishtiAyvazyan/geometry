@@ -63,4 +63,120 @@ public:
     }
 }; // class Segment
 
+
+namespace util
+{
+
+namespace impl
+{
+
+/**
+ * @internal
+ * @brief           Checks if point lies on line segment.
+ *
+ *
+ * @tparam TCrd     The type of coordinates.
+ * @param segment   The given segment.
+ * @param point     The given point.
+ * @return          true if the point lies on the line, otherwise false.
+ */
+template <typename TCrd>
+constexpr bool onSegment(const Segment<TCrd>& segment, const Point <TCrd>& point)
+{
+    const auto[p, q] = segment;
+    return ((point.x() <= std::max(p.x(), q.x()))
+            && (point.x() >= std::min(p.x(), q.x()))
+            && (point.y() <= std::max(p.y(), q.y()))
+            && (point.y() >= std::min(p.y(), q.y())));
+}
+
+enum class EOrientation
+{
+    collinear = 0, clockwise, counterclockwise
+};
+
+/**
+ * @internal
+ * @brief       Finds orientation of ordered triplet (p, q, r).
+ *
+ * @tparam TCrd The type of coordinates.
+ * @param p     The given point.
+ * @param q     The given point.
+ * @param r     The given point.
+ * @return      The orientation (EOrientation::collinear, EOrientation::clockwise, EOrientation::counterclockwise)
+ */
+template <typename TCrd>
+EOrientation orientation(const Point <TCrd>& p, const Point <TCrd>& q, const Point <TCrd>& r)
+{
+    const TCrd val = (q.y() - p.y()) * (r.x() - q.x())
+                     - (q.x() - p.x()) * (r.y() - q.y());
+
+    if (val == 0)
+    {
+        return EOrientation::collinear;
+    }
+
+    return (val > 0) ? EOrientation::clockwise : EOrientation::counterclockwise;
+}
+
+} // namespace util
+
+/**
+ * @brief           Returns true if the given segments has intersect
+ *                  (i.e., there is at least one pixel that is within both segments),
+ *                  otherwise returns false.
+ *
+ * @tparam TCrd     The type of coordinates.
+ * @param first     The first segment.
+ * @param second    The second segment.
+ * @return          true if segments have an intersection, otherwise false.
+ */
+template <typename TCrd>
+constexpr bool hesIntersect(const Segment<TCrd>& first, const Segment<TCrd>& second) noexcept
+{
+    const auto[p1, q1] = first;
+    const auto[p2, q2] = second;
+
+    // Find the four orientations needed for general and special cases
+    const auto o1 = impl::orientation(p1, q1, p2);
+    const auto o2 = impl::orientation(p1, q1, q2);
+    const auto o3 = impl::orientation(p2, q2, p1);
+    const auto o4 = impl::orientation(p2, q2, q1);
+
+    // General case
+    if (o1 != o2 && o3 != o4)
+    {
+        return true;
+    }
+
+    // Special Cases
+    // first and p2 are collinear and p2 lies on segment first
+    if (o1 == impl::EOrientation::collinear && impl::onSegment(first, p2))
+    {
+        return true;
+    }
+
+    // first and q2 are collinear and q2 lies on segment first
+    if (o2 == impl::EOrientation::collinear && impl::onSegment(first, q2))
+    {
+        return true;
+    }
+
+    // second and p1 are collinear and p1 lies on segment second
+    if (o3 == impl::EOrientation::collinear && impl::onSegment(second, p1))
+    {
+        return true;
+    }
+
+    // second and q1 are collinear and q1 lies on segment second
+    if (o4 == impl::EOrientation::collinear && impl::onSegment(second, q1))
+    {
+        return true;
+    }
+
+    // Doesn't fall in any of the above cases
+    return false;
+}
+} // namespace util
+
 } // namespace space

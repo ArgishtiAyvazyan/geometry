@@ -12,6 +12,8 @@
 
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/geometries/box.hpp>
+#include <boost/geometry/geometries/segment.hpp>
+#include <boost/geometry/algorithms/intersection.hpp>
 
 #include <boost/geometry/index/rtree.hpp>
 
@@ -22,6 +24,20 @@
 #include "Polygon.h"
 #include "Segment.h"
 #include "Utility.h"
+
+
+int rand(int from, int to)
+{
+    return (std::rand() % (to - from)) + from;
+}
+
+template <typename TCrd>
+auto spaceToBoostPoint(const space::Point<TCrd>& point)
+{
+    using BPoint = boost::geometry::model::point<TCrd, 2, boost::geometry::cs::cartesian>;
+    const auto[x, y] = point;
+    return BPoint {x, y};
+}
 
 template <typename TCrd>
 auto spaceToBoostRect(const space::Rect<TCrd>& rect)
@@ -436,4 +452,43 @@ TEST_CASE("Compare::Segment", "[space::Segment]")
     REQUIRE_FALSE(segment != segment);
     REQUIRE_FALSE(segment == segment2);
     REQUIRE(segment != segment2);
+}
+
+TEST_CASE("hesIntersect(Simple)::Segment", "[space::Segment]")
+{
+    using Point = space::Point<int32_t>;
+    using Segment = space::Segment<int32_t>;
+
+    Point p1 {1, 1};
+    Point q1 {4, 4};
+    Segment segment {p1, q1};
+    Point p2 {1, 4};
+    Point q2 {4, 1};
+    Segment segment2 {p2, q2};
+
+    REQUIRE(space::util::hesIntersect(segment, segment2));
+}
+
+TEST_CASE("hesIntersect::Segment", "[space::Segment]")
+{
+    using SPoint = space::Point<int32_t>;
+    using SSegment = space::Segment<int32_t>;
+    using BPoint = boost::geometry::model::point<int32_t, 2, boost::geometry::cs::cartesian>;
+    using BSegment = boost::geometry::model::segment<BPoint>;
+
+    for (int32_t i = 0; i < 100'000; ++i)
+    {
+        SPoint p1 {rand(0, 100), rand(0, 100)};
+        SPoint q1 {rand(0, 100), rand(0, 100)};
+        SSegment sSegment1 {p1, q1};
+        BSegment bSegment1 {spaceToBoostPoint(p1), spaceToBoostPoint(q1)};
+        SPoint p2 {rand(0, 100), rand(0, 100)};
+        SPoint q2 {rand(0, 100), rand(0, 100)};
+        SSegment sSegment2 {p2, q2};
+        BSegment bSegment2 {spaceToBoostPoint(p2), spaceToBoostPoint(q2)};
+
+        const bool result = boost::geometry::intersects(bSegment1, bSegment2);
+        REQUIRE(result == space::util::hesIntersect(sSegment1, sSegment2));
+        REQUIRE(result == space::util::hesIntersect(sSegment2, sSegment1));
+    }
 }
