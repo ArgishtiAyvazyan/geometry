@@ -26,16 +26,16 @@ namespace space
  * @details The piecewise linear curve represented by a set of points.
  *          Points in simple polygon are always in clockwise order.
  *
- * @tparam  TCrd The type of coordinate.
+ * @tparam  TCrt The type of coordinate.
  */
-template <typename TCrd>
+template <typename TCrt>
 class SimplePolygon
 {
 public:
     /**
      * @brief   The type of coordinate.
      */
-    using TCoordinate = TCrd;
+    using TCoordinate = TCrt;
 
     /**
      * @brief   The type for representing piecewise linear curve.
@@ -125,13 +125,13 @@ namespace util
 /**
  * @brief       Moves the simple polygon by the specified horizontal and vertical amounts.
  *
- * @tparam TCrd TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param poly  The given simple polygon.
  * @param deltaX The horizontal amounts.
  * @param deltaY The vertical amounts.
  */
-template <typename TCrd>
-constexpr void move(SimplePolygon<TCrd>& poly, TCrd deltaX, TCrd deltaY) noexcept
+template <typename TCrt>
+constexpr void move(SimplePolygon<TCrt>& poly, TCrt deltaX, TCrt deltaY) noexcept
 {
     auto movePoint = [deltaX, deltaY](auto& point)
     {
@@ -145,15 +145,15 @@ constexpr void move(SimplePolygon<TCrd>& poly, TCrd deltaX, TCrd deltaY) noexcep
  *
  * @details     The algorithm complexity is O(n).
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param poly  The given polygon.
  * @return      The boundary box (space::Rect) of the given polygon.
  */
-template <typename TCrd>
-constexpr space::Rect<TCrd> boundaryBoxOf(const SimplePolygon<TCrd>& poly) noexcept
+template <typename TCrt>
+constexpr space::Rect<TCrt> boundaryBoxOf(const SimplePolygon<TCrt>& poly) noexcept
 {
     auto[leftBottomIt, rightTopIt] = std::ranges::minmax_element(poly.boundaryCurve());
-    return space::Rect<TCrd>(*leftBottomIt, *rightTopIt);
+    return space::Rect<TCrt>(*leftBottomIt, *rightTopIt);
 }
 } // namespace util
 
@@ -163,16 +163,16 @@ constexpr space::Rect<TCrd> boundaryBoxOf(const SimplePolygon<TCrd>& poly) noexc
  * @note    Templates used to avoid include stream headers.
  *
  * @tparam  TOstream The type of ostream.
- * @tparam  TCrd The type of coordinates.
+ * @tparam  TCrt The type of coordinates.
  * @param   os The ostream.
  * @param   point The Rect.
  * @return  The reference to ostream.
  */
-template <typename TOstream, typename TCrd>
-TOstream& operator<<(TOstream& os, const space::SimplePolygon<TCrd>& poly)
+template <typename TOstream, typename TCrt>
+TOstream& operator<<(TOstream& os, const space::SimplePolygon<TCrt>& poly)
 {
     os << "SimplePolygon { ";
-    std::ranges::copy(poly.boundaryCurve(), std::ostream_iterator<space::Point<TCrd>>(os, ", "));
+    std::ranges::copy(poly.boundaryCurve(), std::ostream_iterator<space::Point<TCrt>>(os, ", "));
     os << "}";
     return os;
 }

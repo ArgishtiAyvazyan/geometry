@@ -28,13 +28,13 @@ namespace space
  *      Pos (x, y)
  *
  *
- * @tparam  TCrd The type of coordinates.
+ * @tparam  TCrt The type of coordinates.
  */
-template <typename TCrd>
+template <typename TCrt>
 class Rect
 {
 public:
-    using TCoordinate = TCrd;
+    using TCoordinate = TCrt;
 
 private:
     using TPoint = space::Point<TCoordinate>;
@@ -52,7 +52,7 @@ public:
 
     constexpr Rect& operator=(const Rect&) noexcept = default;
 
-    constexpr std::strong_ordering operator<=>(const Rect<TCrd>&) const noexcept = default;
+    constexpr std::strong_ordering operator<=>(const Rect<TCrt>&) const noexcept = default;
 
     /**
      * @brief   Initializes a new instance of the Rect structure that has the specified
@@ -228,13 +228,13 @@ private:
  * @note    Templates used to avoid include stream headers.
  *
  * @tparam  TOstream The type of ostream.
- * @tparam  TCrd The type of coordinates.
+ * @tparam  TCrt The type of coordinates.
  * @param   os The ostream.
  * @param   point The Rect.
  * @return  The reference to ostream.
  */
-template <typename TOstream, typename TCrd>
-TOstream& operator<<(TOstream& os, const space::Rect<TCrd>& rect)
+template <typename TOstream, typename TCrt>
+TOstream& operator<<(TOstream& os, const space::Rect<TCrt>& rect)
 {
     os << "Rect { { " << rect.pos().x() << ", " << rect.pos().y()
        << " }, " << rect.width() << ", " << rect.height() << " }";
@@ -247,13 +247,13 @@ namespace util
 /**
  * @brief Returns the position of the given rectangle top-left corner.
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param rect The rectangle.
  * @return top-left position.
  */
-template <typename TCrd>
+template <typename TCrt>
 [[nodiscard]]
-constexpr space::Point<TCrd> topLeftOf(const Rect<TCrd>& rect) noexcept
+constexpr space::Point<TCrt> topLeftOf(const Rect<TCrt>& rect) noexcept
 {
     return {rect.pos().x(), rect.pos.y() + rect.height()};
 }
@@ -261,13 +261,13 @@ constexpr space::Point<TCrd> topLeftOf(const Rect<TCrd>& rect) noexcept
 /**
  * @brief Returns the position of the given rectangle top-right corner.
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param rect The rectangle.
  * @return top-right position.
  */
-template <typename TCrd>
+template <typename TCrt>
 [[nodiscard]]
-constexpr space::Point<TCrd> topRightOf(const Rect<TCrd>& rect) noexcept
+constexpr space::Point<TCrt> topRightOf(const Rect<TCrt>& rect) noexcept
 {
     return {rect.pos().x() + rect.width(), rect.pos().y() + rect.height()};
 }
@@ -275,13 +275,13 @@ constexpr space::Point<TCrd> topRightOf(const Rect<TCrd>& rect) noexcept
 /**
  * @brief Returns the position of the given rectangle bottom-left corner.
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param rect The rectangle.
  * @return bottom-left position.
  */
-template <typename TCrd>
+template <typename TCrt>
 [[nodiscard]]
-constexpr space::Point<TCrd> bottomLeftOf(const Rect<TCrd>& rect) noexcept
+constexpr space::Point<TCrt> bottomLeftOf(const Rect<TCrt>& rect) noexcept
 {
     return rect.pos();
 }
@@ -289,13 +289,13 @@ constexpr space::Point<TCrd> bottomLeftOf(const Rect<TCrd>& rect) noexcept
 /**
  * @brief Returns the position of the given rectangle bottom-right corner.
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param rect The rectangle.
  * @return bottom-right position.
  */
-template <typename TCrd>
+template <typename TCrt>
 [[nodiscard]]
-constexpr space::Point<TCrd> bottomRightOf(const Rect<TCrd>& rect) noexcept
+constexpr space::Point<TCrt> bottomRightOf(const Rect<TCrt>& rect) noexcept
 {
     return {rect.pos().x() + rect.width(), rect.pos().y()};
 }
@@ -305,8 +305,8 @@ constexpr space::Point<TCrd> bottomRightOf(const Rect<TCrd>& rect) noexcept
 
 namespace std
 {
-template <typename TCrd>
-struct tuple_size<::space::Rect<TCrd>>
+template <typename TCrt>
+struct tuple_size<::space::Rect<TCrt>>
     : integral_constant<size_t, 4>
 {
 };
@@ -314,11 +314,11 @@ struct tuple_size<::space::Rect<TCrd>>
 
 namespace std
 {
-template <size_t Index, typename TCrd>
-struct tuple_element<Index, ::space::Rect<TCrd>>
+template <size_t Index, typename TCrt>
+struct tuple_element<Index, ::space::Rect<TCrt>>
 {
-    using type = TCrd;
-    static_assert(Index < tuple_size_v<::space::Rect<TCrd>>, "Index out of bounds for Rect.");
+    using type = TCrt;
+    static_assert(Index < tuple_size_v<::space::Rect<TCrt>>, "Index out of bounds for Rect.");
 };
 } // namespace std
 

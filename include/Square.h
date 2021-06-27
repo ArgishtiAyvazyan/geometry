@@ -24,13 +24,13 @@ namespace space
  *      Pos (x, y)
  *
  *
- * @tparam  TCrd The type of coordinates.
+ * @tparam  TCrt The type of coordinates.
  */
-template <typename TCrd>
+template <typename TCrt>
 class Square
 {
 public:
-    using TCoordinate = TCrd;
+    using TCoordinate = TCrt;
 
 private:
     using TPoint = space::Point<TCoordinate>;
@@ -48,7 +48,7 @@ public:
 
     constexpr Square& operator=(const Square&) noexcept = default;
 
-    constexpr std::strong_ordering operator<=>(const Square<TCrd>&) const noexcept = default;
+    constexpr std::strong_ordering operator<=>(const Square<TCrt>&) const noexcept = default;
 
     /**
      * @brief   Initializes a new instance of the Square structure that has the specified
@@ -176,13 +176,13 @@ private:
  * @note    Templates used to avoid include stream headers.
  *
  * @tparam  TOstream The type of ostream.
- * @tparam  TCrd The type of coordinates.
+ * @tparam  TCrt The type of coordinates.
  * @param   os The ostream.
  * @param   point The Square.
  * @return  The reference to ostream.
  */
-template <typename TOstream, typename TCrd>
-TOstream& operator<<(TOstream& os, const space::Square<TCrd>& rect)
+template <typename TOstream, typename TCrt>
+TOstream& operator<<(TOstream& os, const space::Square<TCrt>& rect)
 {
     os << "Square { { " << rect.pos().x() << ", " << rect.pos().y()
        << " }, " << rect.size() << " }";
@@ -196,13 +196,13 @@ namespace util
 /**
  * @brief Returns the position of the given square top-left corner.
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param square The square.
  * @return top-left position.
  */
-template <typename TCrd>
+template <typename TCrt>
 [[nodiscard]]
-constexpr space::Point<TCrd> topLeftOf(const Square<TCrd>& square) noexcept
+constexpr space::Point<TCrt> topLeftOf(const Square<TCrt>& square) noexcept
 {
     return {square.pos().x(), square.pos.y() + square.size()};
 }
@@ -210,13 +210,13 @@ constexpr space::Point<TCrd> topLeftOf(const Square<TCrd>& square) noexcept
 /**
  * @brief Returns the position of the given square top-right corner.
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param square The square.
  * @return top-right position.
  */
-template <typename TCrd>
+template <typename TCrt>
 [[nodiscard]]
-constexpr space::Point<TCrd> topRightOf(const Square<TCrd>& square) noexcept
+constexpr space::Point<TCrt> topRightOf(const Square<TCrt>& square) noexcept
 {
     return {square.pos().x() + square.size(), square.pos().y() + square.size()};
 }
@@ -224,13 +224,13 @@ constexpr space::Point<TCrd> topRightOf(const Square<TCrd>& square) noexcept
 /**
  * @brief Returns the position of the given square bottom-left corner.
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param square The square.
  * @return bottom-left position.
  */
-template <typename TCrd>
+template <typename TCrt>
 [[nodiscard]]
-constexpr space::Point<TCrd> bottomLeftOf(const Square<TCrd>& square) noexcept
+constexpr space::Point<TCrt> bottomLeftOf(const Square<TCrt>& square) noexcept
 {
     return square.pos();
 }
@@ -238,13 +238,13 @@ constexpr space::Point<TCrd> bottomLeftOf(const Square<TCrd>& square) noexcept
 /**
  * @brief Returns the position of the given square bottom-right corner.
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param square The square.
  * @return bottom-right position.
  */
-template <typename TCrd>
+template <typename TCrt>
 [[nodiscard]]
-constexpr space::Point<TCrd> bottomRightOf(const Square<TCrd>& square) noexcept
+constexpr space::Point<TCrt> bottomRightOf(const Square<TCrt>& square) noexcept
 {
     return {square.pos().x() + square.size(), square.pos().y()};
 }
@@ -253,8 +253,8 @@ constexpr space::Point<TCrd> bottomRightOf(const Square<TCrd>& square) noexcept
 
 namespace std
 {
-template <typename TCrd>
-struct tuple_size<::space::Square<TCrd>>
+template <typename TCrt>
+struct tuple_size<::space::Square<TCrt>>
     : integral_constant<size_t, 4>
 {
 };
@@ -262,10 +262,10 @@ struct tuple_size<::space::Square<TCrd>>
 
 namespace std
 {
-template <size_t Index, typename TCrd>
-struct tuple_element<Index, ::space::Square<TCrd>>
+template <size_t Index, typename TCrt>
+struct tuple_element<Index, ::space::Square<TCrt>>
 {
-    using type = TCrd;
-    static_assert(Index < tuple_size_v<::space::Square<TCrd>>, "Index out of bounds for Square.");
+    using type = TCrt;
+    static_assert(Index < tuple_size_v<::space::Square<TCrt>>, "Index out of bounds for Square.");
 };
 } // namespace std

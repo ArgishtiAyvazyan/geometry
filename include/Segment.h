@@ -22,17 +22,17 @@ namespace space
  *
  * @details Class Segment: small class containing two points.
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  */
-template <typename TCrd>
-class Segment : public std::pair<space::Point<TCrd>, space::Point<TCrd>>
+template <typename TCrt>
+class Segment : public std::pair<space::Point<TCrt>, space::Point<TCrt>>
 {
 public:
 
     /**
      * @brief   The type of coordinate.
      */
-    using TCoordinate = TCrd;
+    using TCoordinate = TCrt;
 
 public:
 
@@ -48,7 +48,7 @@ public:
 
     constexpr Segment& operator=(const Segment&) noexcept = default;
 
-    constexpr std::strong_ordering operator<=>(const Segment<TCrd>&) const noexcept = default;
+    constexpr std::strong_ordering operator<=>(const Segment<TCrt>&) const noexcept = default;
 
     /**
      * @brief           Initializes a new instance of the Segment structure that has the
@@ -57,8 +57,8 @@ public:
      * @param first_    The first point.
      * @param second_   The second point.
      */
-    constexpr Segment(const space::Point<TCrd>& first_, const space::Point<TCrd>& second_)
-        : std::pair<space::Point<TCrd>, space::Point<TCrd>> {first_, second_}
+    constexpr Segment(const space::Point<TCrt>& first_, const space::Point<TCrt>& second_)
+        : std::pair<space::Point<TCrt>, space::Point<TCrt>> {first_, second_}
     {
     }
 }; // class Segment
@@ -75,13 +75,13 @@ namespace impl
  * @brief           Checks if point lies on line segment.
  *
  *
- * @tparam TCrd     The type of coordinates.
+ * @tparam TCrt     The type of coordinates.
  * @param segment   The given segment.
  * @param point     The given point.
  * @return          true if the point lies on the line, otherwise false.
  */
-template <typename TCrd>
-constexpr bool onSegment(const Segment<TCrd>& segment, const Point <TCrd>& point)
+template <typename TCrt>
+constexpr bool onSegment(const Segment<TCrt>& segment, const Point <TCrt>& point)
 {
     const auto[p, q] = segment;
     return ((point.x() <= std::max(p.x(), q.x()))
@@ -99,16 +99,16 @@ enum class EOrientation
  * @internal
  * @brief       Finds orientation of ordered triplet (p, q, r).
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param p     The given point.
  * @param q     The given point.
  * @param r     The given point.
  * @return      The orientation (EOrientation::collinear, EOrientation::clockwise, EOrientation::counterclockwise)
  */
-template <typename TCrd>
-EOrientation orientation(const Point <TCrd>& p, const Point <TCrd>& q, const Point <TCrd>& r)
+template <typename TCrt>
+EOrientation orientation(const Point <TCrt>& p, const Point <TCrt>& q, const Point <TCrt>& r)
 {
-    const TCrd val = (q.y() - p.y()) * (r.x() - q.x())
+    const TCrt val = (q.y() - p.y()) * (r.x() - q.x())
                      - (q.x() - p.x()) * (r.y() - q.y());
 
     if (val == 0)
@@ -126,13 +126,13 @@ EOrientation orientation(const Point <TCrd>& p, const Point <TCrd>& q, const Poi
  *                  (i.e., there is at least one pixel that is within both segments),
  *                  otherwise returns false.
  *
- * @tparam TCrd     The type of coordinates.
+ * @tparam TCrt     The type of coordinates.
  * @param first     The first segment.
  * @param second    The second segment.
  * @return          true if segments have an intersection, otherwise false.
  */
-template <typename TCrd>
-constexpr bool hesIntersect(const Segment<TCrd>& first, const Segment<TCrd>& second) noexcept
+template <typename TCrt>
+constexpr bool hesIntersect(const Segment<TCrt>& first, const Segment<TCrt>& second) noexcept
 {
     const auto[p1, q1] = first;
     const auto[p2, q2] = second;

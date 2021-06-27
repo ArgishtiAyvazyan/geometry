@@ -24,9 +24,9 @@ namespace space
  *          A polygon with holes is an area-connected simple polygon with one
  *          external boundary and one or more interior boundaries (holes).
  *
- * @tparam  TCrd The type of coordinate.
+ * @tparam  TCrt The type of coordinate.
  */
-template <typename TCrd>
+template <typename TCrt>
 class Polygon
 {
 public:
@@ -34,7 +34,7 @@ public:
     /**
      * @brief   The type of coordinate.
      */
-    using TCoordinate = TCrd;
+    using TCoordinate = TCrt;
 
     /**
      * @brief   The type simple polygon.
@@ -55,7 +55,7 @@ public:
 
     constexpr Polygon& operator=(const Polygon&) noexcept = default;
 
-    /* constexpr */ std::strong_ordering operator<=>(const Polygon<TCrd>&) const noexcept = default;
+    /* constexpr */ std::strong_ordering operator<=>(const Polygon<TCrt>&) const noexcept = default;
 
     /**
      * @brief           Initializes a new instance of the Polygon structure
@@ -172,13 +172,13 @@ namespace util
 /**
  * @brief       Moves the Polygon by the specified horizontal and vertical amounts.
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param poly  The given polygon.
  * @param deltaX The horizontal amounts.
  * @param deltaY The vertical amounts.
  */
-template <typename TCrd>
-constexpr void move(Polygon<TCrd>& poly, TCrd deltaX, TCrd deltaY) noexcept
+template <typename TCrt>
+constexpr void move(Polygon<TCrt>& poly, TCrt deltaX, TCrt deltaY) noexcept
 {
     move(poly.boundary(), deltaX, deltaY);
     auto movePolygon = [deltaX, deltaY](auto& simplePoly)
@@ -193,12 +193,12 @@ constexpr void move(Polygon<TCrd>& poly, TCrd deltaX, TCrd deltaY) noexcept
  *
  * @details     The algorithm complexity is O(n).
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param  poly The given polygon.
  * @return      The boundary box (space::Rect) of the given polygon.
  */
-template <typename TCrd>
-constexpr space::Rect<TCrd> boundaryBoxOf(const Polygon<TCrd>& poly) noexcept
+template <typename TCrt>
+constexpr space::Rect<TCrt> boundaryBoxOf(const Polygon<TCrt>& poly) noexcept
 {
     return boundaryBoxOf(poly.boundary());
 }
@@ -211,13 +211,13 @@ constexpr space::Rect<TCrd> boundaryBoxOf(const Polygon<TCrd>& poly) noexcept
  * @note    Templates used to avoid include stream headers.
  *
  * @tparam  TOstream The type of ostream.
- * @tparam  TCrd The type of coordinates.
+ * @tparam  TCrt The type of coordinates.
  * @param   os The ostream.
  * @param   point The Rect.
  * @return  The reference to ostream.
  */
-template <typename TOstream, typename TCrd>
-TOstream& operator<<(TOstream& os, const space::Polygon<TCrd>& poly)
+template <typename TOstream, typename TCrt>
+TOstream& operator<<(TOstream& os, const space::Polygon<TCrt>& poly)
 {
     os << "Polygon { Boundary: { ";
     os << poly.boundary();

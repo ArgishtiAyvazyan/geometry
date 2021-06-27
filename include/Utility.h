@@ -15,13 +15,13 @@ namespace space::util
 /**
  * @brief Moves the orthogonal shape by the specified horizontal and vertical amounts.
  *
- * @tparam TCrd The type of coordinates.
+ * @tparam TCrt The type of coordinates.
  * @param rect The orthogonal shape.
  * @param deltaX The horizontal amounts.
  * @param deltaY The vertical amounts.
  */
-template <typename TOrthogonalShape, typename TCrd>
-constexpr void move(TOrthogonalShape& rect, TCrd deltaX, TCrd deltaY) noexcept
+template <typename TOrthogonalShape, typename TCrt>
+constexpr void move(TOrthogonalShape& rect, TCrt deltaX, TCrt deltaY) noexcept
 {
     move(rect.pos(), deltaX, deltaY);
 }
@@ -29,15 +29,15 @@ constexpr void move(TOrthogonalShape& rect, TCrd deltaX, TCrd deltaY) noexcept
 /**
  * @brief   Compute the distance between two given points.
  *
- * @tparam  TCrd The type of coordinates.
- * @tparam  TRetVal The type of return value (by default TCrd)
+ * @tparam  TCrt The type of coordinates.
+ * @tparam  TRetVal The type of return value (by default TCrt)
  * @param   first The first point.
  * @param   second The second point.
  * @return  The computed distance.
  */
-template <typename TCrd, typename TRetVal = TCrd>
+template <typename TCrt, typename TRetVal = TCrt>
 [[nodiscard]]
-constexpr TRetVal distance(const Point<TCrd>& first, const Point<TCrd>& second) noexcept
+constexpr TRetVal distance(const Point<TCrt>& first, const Point<TCrt>& second) noexcept
 {
     const auto xDelta = first.x() - second.x();
     const auto yDelta = first.y() - second.y();
@@ -86,14 +86,14 @@ constexpr bool hesIntersect(const TOrthogonalShape1& first, const TOrthogonalSha
  * @brief  Returns true if the given point is inside or on the edge of the rectangle, otherwise returns false.
  *
  * @tparam  TOrthogonalShape The type of orthogonal object.
- * @tparam  TCrd The type of coordinates.
+ * @tparam  TCrt The type of coordinates.
  * @param   rect The given rectangle.
  * @param   point The given point.
  * @return  true if contains, otherwise returns false.
  */
-template <typename TOrthogonalShape, typename TCrd>
+template <typename TOrthogonalShape, typename TCrt>
 [[nodiscard]]
-constexpr bool contains(const TOrthogonalShape& rect, const Point<TCrd>& point) noexcept
+constexpr bool contains(const TOrthogonalShape& rect, const Point<TCrt>& point) noexcept
 {
     const auto[x1, y1] = bottomLeftOf(rect);
     const auto[x2, y2] = topRightOf(rect);

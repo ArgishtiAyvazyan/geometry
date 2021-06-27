@@ -31,18 +31,18 @@ int rand(int from, int to)
     return (std::rand() % (to - from)) + from;
 }
 
-template <typename TCrd>
-auto spaceToBoostPoint(const space::Point<TCrd>& point)
+template <typename TCrt>
+auto spaceToBoostPoint(const space::Point<TCrt>& point)
 {
-    using BPoint = boost::geometry::model::point<TCrd, 2, boost::geometry::cs::cartesian>;
+    using BPoint = boost::geometry::model::point<TCrt, 2, boost::geometry::cs::cartesian>;
     const auto[x, y] = point;
     return BPoint {x, y};
 }
 
-template <typename TCrd>
-auto spaceToBoostRect(const space::Rect<TCrd>& rect)
+template <typename TCrt>
+auto spaceToBoostRect(const space::Rect<TCrt>& rect)
 {
-    using point = boost::geometry::model::point<TCrd, 2, boost::geometry::cs::cartesian>;
+    using point = boost::geometry::model::point<TCrt, 2, boost::geometry::cs::cartesian>;
     using box = boost::geometry::model::box<point>;
 
     const auto[x1, y1] = space::util::bottomLeftOf(rect);

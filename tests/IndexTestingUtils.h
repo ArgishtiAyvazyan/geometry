@@ -18,10 +18,10 @@
 namespace test_util
 {
 
-template <typename TCrd>
-auto spaceToBoostRect(const space::Rect<TCrd>& rect)
+template <typename TCrt>
+auto spaceToBoostRect(const space::Rect<TCrt>& rect)
 {
-    using point = boost::geometry::model::point<TCrd, 2, boost::geometry::cs::cartesian>;
+    using point = boost::geometry::model::point<TCrt, 2, boost::geometry::cs::cartesian>;
     using box = boost::geometry::model::box<point>;
 
     const auto[x1, y1] = space::util::bottomLeftOf(rect);
@@ -29,25 +29,25 @@ auto spaceToBoostRect(const space::Rect<TCrd>& rect)
     return box(point(x1, y1), point(x2, y2));
 }
 
-template <typename TCrd>
+template <typename TCrt>
 auto boostToSpaceRect(
-    const boost::geometry::model::box<boost::geometry::model::point<TCrd, 2, boost::geometry::cs::cartesian>>& rect)
+    const boost::geometry::model::box<boost::geometry::model::point<TCrt, 2, boost::geometry::cs::cartesian>>& rect)
 {
     auto x1_ = rect.min_corner().template get<0>();
     auto y1_ = rect.min_corner().template get<1>();
     auto x2_ = rect.max_corner().template get<0>();
     auto y2_ = rect.max_corner().template get<1>();
-    space::Rect<TCrd> r {{x1_, y1_}, (x2_ - x1_), (y2_ - y1_)};
+    space::Rect<TCrt> r {{x1_, y1_}, (x2_ - x1_), (y2_ - y1_)};
     return r;
 }
 
-template <typename TCrd>
+template <typename TCrt>
 void printDiff(
-    const std::vector<space::Rect<TCrd>>& quadTreeQueryRes,
-    const std::vector<std::pair<boost::geometry::model::box<boost::geometry::model::point<TCrd, 2, boost::geometry::cs::cartesian>>, unsigned>>& rTreeQueryRes)
+    const std::vector<space::Rect<TCrt>>& quadTreeQueryRes,
+    const std::vector<std::pair<boost::geometry::model::box<boost::geometry::model::point<TCrt, 2, boost::geometry::cs::cartesian>>, unsigned>>& rTreeQueryRes)
 {
     std::cout << "=============================================" << std::endl;
-    std::set<space::Rect<TCrd>> rectsSet(quadTreeQueryRes.begin(), quadTreeQueryRes.end());
+    std::set<space::Rect<TCrt>> rectsSet(quadTreeQueryRes.begin(), quadTreeQueryRes.end());
 
     for (const auto& item : rTreeQueryRes)
     {
@@ -64,28 +64,28 @@ int rand(int from, int to)
     return (std::rand() % (to - from)) + from;
 }
 
-template <typename TCrd>
-auto getRandPoint(TCrd maxPos)
+template <typename TCrt>
+auto getRandPoint(TCrt maxPos)
 {
     return space::Point {rand(0, maxPos), rand(0, maxPos)};
 }
 
-template <typename TCrd>
-auto getRandRect(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
+template <typename TCrt>
+auto getRandRect(TCrt maxPos, TCrt maxRectWidth, TCrt maxRectHeight)
 {
-    return space::Rect<TCrd> {getRandPoint(maxPos), rand(0, maxRectWidth), rand(0, maxRectHeight)};
+    return space::Rect<TCrt> {getRandPoint(maxPos), rand(0, maxRectWidth), rand(0, maxRectHeight)};
 }
 
-template <typename TIndex, typename TCrd, size_t Count>
-void queryTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
+template <typename TIndex, typename TCrt, size_t Count>
+void queryTest(TCrt maxPos, TCrt maxRectWidth, TCrt maxRectHeight)
 {
-    std::set<space::Rect<TCrd>> initialRects;
+    std::set<space::Rect<TCrt>> initialRects;
     for (size_t i = 0; i < Count; ++i)
     {
         initialRects.insert(getRandRect(maxPos, maxRectWidth, maxRectHeight));
     }
 
-    using point = boost::geometry::model::point<TCrd, 2, boost::geometry::cs::cartesian>;
+    using point = boost::geometry::model::point<TCrt, 2, boost::geometry::cs::cartesian>;
     using box = boost::geometry::model::box<point>;
     using value = std::pair<box, unsigned>;
 
@@ -104,9 +104,9 @@ void queryTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
 
     for (size_t i = 0; i < Count; ++i)
     {
-        space::Rect<TCrd> queryRect {getRandRect(maxPos, maxRectWidth, maxRectHeight)};
+        space::Rect<TCrt> queryRect {getRandRect(maxPos, maxRectWidth, maxRectHeight)};
 
-        std::vector<space::Rect<TCrd>> quadTreeQueryRes;
+        std::vector<space::Rect<TCrt>> quadTreeQueryRes;
         index.query(queryRect, std::back_inserter(quadTreeQueryRes));
 
 
@@ -125,8 +125,8 @@ void queryTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
     }
 }
 
-template <typename TIndex, typename TCrd, size_t Count>
-void removeTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
+template <typename TIndex, typename TCrt, size_t Count>
+void removeTest(TCrt maxPos, TCrt maxRectWidth, TCrt maxRectHeight)
 {
     TIndex index;
     size_t size = 0;
@@ -141,9 +141,9 @@ void removeTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
 
     for (size_t i = 0; i < Count; ++i)
     {
-        space::Rect<TCrd> removeRect {getRandRect(maxPos, maxRectWidth, maxRectHeight)};
+        space::Rect<TCrt> removeRect {getRandRect(maxPos, maxRectWidth, maxRectHeight)};
 
-        std::vector<space::Rect<TCrd>> quadTreeQueryRes;
+        std::vector<space::Rect<TCrt>> quadTreeQueryRes;
         index.query(removeRect, std::back_inserter(quadTreeQueryRes));
         for (auto& rect : quadTreeQueryRes)
         {
@@ -153,32 +153,32 @@ void removeTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
         }
         size -= quadTreeQueryRes.size();
         REQUIRE(index.size() == size);
-        std::vector<space::Rect<TCrd>> quadTreeQueryRes2;
+        std::vector<space::Rect<TCrt>> quadTreeQueryRes2;
         index.query(removeRect, std::back_inserter(quadTreeQueryRes2));
         REQUIRE(quadTreeQueryRes2.empty());
     }
 }
 
 
-template <typename TIndex, typename TCrd>
+template <typename TIndex, typename TCrt>
 void actionsOnEmptyIndexTest()
 {
     TIndex index;
-    space::Rect<TCrd> rect {{13, 13}, 13, 13};
+    space::Rect<TCrt> rect {{13, 13}, 13, 13};
 
     REQUIRE_FALSE(index.contains(rect));
-    std::vector<space::Rect<TCrd>> quadTreeQueryRes;
+    std::vector<space::Rect<TCrt>> quadTreeQueryRes;
     index.query(rect, std::back_inserter(quadTreeQueryRes));
     REQUIRE(quadTreeQueryRes.empty());
     index.remove(rect);
 }
 
-template <typename TIndex, typename TCrd>
+template <typename TIndex, typename TCrt>
 void emptyIndexTest()
 {
     TIndex index;
     REQUIRE(index.empty());
-    space::Rect<TCrd> rect {{13, 13}, 13, 13};
+    space::Rect<TCrt> rect {{13, 13}, 13, 13};
     index.insert(rect);
     REQUIRE_FALSE(index.empty());
     index.remove({{14, 13}, 13, 13});
@@ -187,7 +187,7 @@ void emptyIndexTest()
     REQUIRE(index.empty());
 }
 
-template <typename TIndex, typename TCrd>
+template <typename TIndex, typename TCrt>
 void clearIndexTest()
 {
     TIndex index;
@@ -201,10 +201,10 @@ void clearIndexTest()
     REQUIRE(index.empty());
 }
 
-template <typename TIndex, typename TCrd, size_t Count>
-void sizeTest(TCrd maxPos, TCrd maxRectWidth, TCrd maxRectHeight)
+template <typename TIndex, typename TCrt, size_t Count>
+void sizeTest(TCrt maxPos, TCrt maxRectWidth, TCrt maxRectHeight)
 {
-    std::set<space::Rect<TCrd>> initialRects;
+    std::set<space::Rect<TCrt>> initialRects;
     for (size_t i = 0; i < Count; ++i)
     {
         initialRects.insert(getRandRect(maxPos, maxRectWidth, maxRectHeight));

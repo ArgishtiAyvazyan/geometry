@@ -19,13 +19,13 @@ namespace space
  * @brief   Represents an ordered pair of x- and y-coordinates that
  *          defines a point in a two-dimensional plane.
  *
- * @tparam  TCrd The type of coordinates.
+ * @tparam  TCrt The type of coordinates.
  */
-template <typename TCrd>
+template <typename TCrt>
 class Point
 {
 public:
-    using TCoordinate = TCrd;
+    using TCoordinate = TCrt;
 
     constexpr Point() = default;
 
@@ -39,7 +39,7 @@ public:
 
     constexpr Point& operator=(const Point&) noexcept = default;
 
-    constexpr std::strong_ordering operator<=>(const Point<TCrd>&) const noexcept = default;
+    constexpr std::strong_ordering operator<=>(const Point<TCrt>&) const noexcept = default;
 
     /**
      * @brief   Initializes a new instance of the Point struct with the specified coordinates.
@@ -168,13 +168,13 @@ namespace util
 /**
  * @brief   Moves given Point by the specified amount.
  *
- * @tparam  TCrd The type of coordinates.
+ * @tparam  TCrt The type of coordinates.
  * @param   point The point for moving.
  * @param   deltaX The amount to offset the x-coordinate.
  * @param   deltaY The amount to offset the y-coordinate.
  */
-template <typename TCrd>
-constexpr void move(Point<TCrd>& point, TCrd deltaX, TCrd deltaY) noexcept
+template <typename TCrt>
+constexpr void move(Point<TCrt>& point, TCrt deltaX, TCrt deltaY) noexcept
 {
     point.setX(point.x() + deltaX);
     point.setY(point.y() + deltaY);
@@ -187,13 +187,13 @@ constexpr void move(Point<TCrd>& point, TCrd deltaX, TCrd deltaY) noexcept
  * @note    Templates used to avoid include stream headers.
  *
  * @tparam  TOstream The type of ostream.
- * @tparam  TCrd The type of coordinates.
+ * @tparam  TCrt The type of coordinates.
  * @param   os The ostream.
  * @param   point The point.
  * @return  The reference to ostream.
  */
-template <typename TOstream, typename TCrd>
-TOstream& operator<<(TOstream& os, const space::Point<TCrd>& point)
+template <typename TOstream, typename TCrt>
+TOstream& operator<<(TOstream& os, const space::Point<TCrt>& point)
 {
     os << "Point { " << point.x() << ", " << point.y() << " }";
     return os;
@@ -207,8 +207,8 @@ namespace std
  * The helper functions for structure binding.
 */
 
-template <typename TCrd>
-struct tuple_size<::space::Point<TCrd>>
+template <typename TCrt>
+struct tuple_size<::space::Point<TCrt>>
     : integral_constant<size_t, 2>
 {
 };
@@ -216,11 +216,11 @@ struct tuple_size<::space::Point<TCrd>>
 
 namespace std
 {
-template <size_t Index, typename TCrd>
-struct tuple_element<Index, ::space::Point<TCrd>>
-    : conditional<Index == 0, TCrd, TCrd>
+template <size_t Index, typename TCrt>
+struct tuple_element<Index, ::space::Point<TCrt>>
+    : conditional<Index == 0, TCrt, TCrt>
 {
-    static_assert(Index < tuple_size_v < ::space::Point<TCrd>>, "Index out of bounds for Point.");
+    static_assert(Index < tuple_size_v < ::space::Point<TCrt>>, "Index out of bounds for Point.");
 };
 } // namespace std
 
