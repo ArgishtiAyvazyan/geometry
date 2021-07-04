@@ -50,7 +50,7 @@ auto spaceToBoostRect(const space::Rect<TCrt>& rect)
     return box(point(x1, y1), point(x2, y2));
 }
 
-TEST(ComparePoint, space_Point)
+TEST(space_Point, ComparePoint)
 {
     space::Point<int32_t> point {50, 13};
     space::Point<int32_t> point1 {0, 0};
@@ -61,7 +61,7 @@ TEST(ComparePoint, space_Point)
     ASSERT_TRUE(point != point1);
 }
 
-TEST(CoverRectPoint, space_util)
+TEST(space_util, CoverRectPoint)
 {
     space::Rect<int32_t> rect {{0, 0}, 100, 100};
     space::Point<int32_t> point {50, 50};
@@ -70,7 +70,7 @@ TEST(CoverRectPoint, space_util)
     ASSERT_FALSE (space::util::contains(rect, point));
 }
 
-TEST(CoverRect, space_util)
+TEST(space_util, CoverRect)
 {
     space::Rect<int32_t> rect1 {{0, 0}, 100, 100};
     space::Rect<int32_t> rect2 {{50, 50}, 10, 10};
@@ -79,7 +79,7 @@ TEST(CoverRect, space_util)
     ASSERT_FALSE (space::util::contains(rect1, rect2));
 }
 
-TEST(CreateRect, space_util)
+TEST(space_util, CreateRect)
 {
     space::Point<int32_t> leftBottom {1, 1};
     space::Point<int32_t> rightTop {13, 13};
@@ -91,7 +91,7 @@ TEST(CreateRect, space_util)
 }
 
 
-TEST(CompareRect, space_Rect)
+TEST(space_Rect, CompareRect)
 {
     space::Rect<int32_t> rect {{50, 13}, 100, 100};
     space::Rect<int32_t> rect1 {{0, 0}, 123, 123};
@@ -103,7 +103,7 @@ TEST(CompareRect, space_Rect)
 }
 
 
-TEST(CoverSquarePoint, space_util)
+TEST(space_util, CoverSquarePoint)
 {
     space::Square<int32_t> rect {{0, 0}, 100};
     space::Point<int32_t> point {50, 50};
@@ -112,7 +112,7 @@ TEST(CoverSquarePoint, space_util)
     ASSERT_FALSE (space::util::contains(rect, point));
 }
 
-TEST(CoverSquare, space_util)
+TEST(space_util, CoverSquare)
 {
     space::Square<int32_t> rect1 {{0, 0}, 100};
     space::Rect<int32_t> rect2 {{50, 50}, 10, 10};
@@ -121,7 +121,7 @@ TEST(CoverSquare, space_util)
     ASSERT_FALSE (space::util::contains(rect1, rect2));
 }
 
-TEST(IntersectsRect, space_util)
+TEST(space_util, IntersectsRect)
 {
     space::Rect<int32_t> rect {{50, 13}, 100, 100};
     space::Rect<int32_t> rect1 {{0, 0}, 123, 123};
@@ -152,7 +152,7 @@ TEST(IntersectsRect, space_util)
     }
 }
 
-TEST(IntersectsSquare, space_Square)
+TEST(space_Square, IntersectsSquare)
 {
     space::Rect<int32_t> rect {{50, 13}, 100, 100};
     space::Square<int32_t> rect1 {{0, 0}, 123};
@@ -171,7 +171,7 @@ TEST(IntersectsSquare, space_Square)
     ASSERT_FALSE(space::util::hesIntersect(rect1, rect));
 }
 
-TEST(CompareSquare, space_Square)
+TEST(space_Square, CompareSquare)
 {
     space::Square<int32_t> square {{50, 13}, 100};
     space::Square<int32_t> square1 {{0, 0}, 123};
@@ -182,7 +182,7 @@ TEST(CompareSquare, space_Square)
     ASSERT_TRUE(square != square1);
 }
 
-TEST(EmptySimplePolygon, space_SimplePolygon)
+TEST(space_SimplePolygon, EmptySimplePolygon)
 {
     using Poly = space::SimplePolygon<int32_t>;
     Poly poly;
@@ -194,7 +194,7 @@ TEST(EmptySimplePolygon, space_SimplePolygon)
     ASSERT_FALSE (poly1.empty());
 }
 
-TEST(BoundaryCurveSimplePolygon, space_SimplePolygon)
+TEST(space_SimplePolygon, BoundaryCurveSimplePolygon)
 {
     using Poly = space::SimplePolygon<int32_t>;
     Poly poly;
@@ -208,7 +208,7 @@ TEST(BoundaryCurveSimplePolygon, space_SimplePolygon)
     ASSERT_TRUE(boundary == poly1.boundaryCurve());
 }
 
-TEST(MoveSimplePolygon, space_SimplePolygon)
+TEST(space_SimplePolygon, MoveSimplePolygon)
 {
     using Poly = space::SimplePolygon<int32_t>;
 
@@ -229,7 +229,7 @@ TEST(MoveSimplePolygon, space_SimplePolygon)
                                ));
 }
 
-TEST(BoundaryBoxOfSimplePolygon, space_SimplePolygon)
+TEST(space_SimplePolygon, BoundaryBoxOfSimplePolygon)
 {
     using Poly = space::SimplePolygon<int32_t>;
     using Rect = space::Rect<int32_t>;
@@ -245,7 +245,7 @@ TEST(BoundaryBoxOfSimplePolygon, space_SimplePolygon)
     ASSERT_TRUE((bBox == Rect {{0,   0}, {124, 444}}));
 }
 
-TEST(CompareSimplePolygon, space_SimplePolygon)
+TEST(space_SimplePolygon, CompareSimplePolygon)
 {
     using Poly = space::SimplePolygon<int32_t>;
 
@@ -264,7 +264,7 @@ TEST(CompareSimplePolygon, space_SimplePolygon)
     ASSERT_TRUE(poly != poly1);
 }
 
-TEST(ContainsPointSimplePolygonSimpleCases, space_SimplePolygon)
+TEST(space_SimplePolygon, ContainsPointSimplePolygonSimpleCases)
 {
     using Poly = space::SimplePolygon<int32_t>;
     using Bound = Poly::TPiecewiseLinearCurve;
@@ -290,7 +290,7 @@ TEST(ContainsPointSimplePolygonSimpleCases, space_SimplePolygon)
     }
 }
 
-TEST(EmptyPolygon, space_Polygon)
+TEST(space_Polygon, EmptyPolygon)
 {
     using Poly = space::Polygon<int32_t>;
     using SimplePoly = space::SimplePolygon<int32_t>;
@@ -313,7 +313,7 @@ TEST(EmptyPolygon, space_Polygon)
     ASSERT_TRUE (poly2.hasHoles());
 }
 
-TEST(HasHolesPolygon, space_Polygon)
+TEST(space_Polygon, HasHolesPolygon)
 {
     using Poly = space::Polygon<int32_t>;
     using SimplePoly = space::SimplePolygon<int32_t>;
@@ -332,7 +332,7 @@ TEST(HasHolesPolygon, space_Polygon)
     ASSERT_TRUE (poly1.hasHoles());
 }
 
-TEST(boundary_Polygon, space_Polygon)
+TEST(space_Polygon, boundary_Polygon)
 {
     using Poly = space::Polygon<int32_t>;
 
@@ -348,7 +348,7 @@ TEST(boundary_Polygon, space_Polygon)
     ASSERT_TRUE(boundary == poly1.boundary());
 }
 
-TEST(HolesPolygon, space_Polygon)
+TEST(space_Polygon, HolesPolygon)
 {
     using Poly = space::Polygon<int32_t>;
     using SimplePoly = space::SimplePolygon<int32_t>;
@@ -372,7 +372,7 @@ TEST(HolesPolygon, space_Polygon)
     ASSERT_TRUE(std::size(spanHoles) == std::size(holes));
 }
 
-TEST(MovePolygon, space_Polygon)
+TEST(space_Polygon, MovePolygon)
 {
     using Poly = space::Polygon<int32_t>;
     using SimplePoly = space::SimplePolygon<int32_t>;
@@ -399,7 +399,7 @@ TEST(MovePolygon, space_Polygon)
     ASSERT_TRUE (std::ranges::equal(holes, poly.holes(), equal));
 }
 
-TEST(BoundaryBoxOfPolygon, space_Polygon)
+TEST(space_Polygon, BoundaryBoxOfPolygon)
 {
     using Poly = space::Polygon<int32_t>;
     using Rect = space::Rect<int32_t>;
@@ -421,7 +421,7 @@ TEST(BoundaryBoxOfPolygon, space_Polygon)
     ASSERT_EQ(bBox , target);
 }
 
-TEST(ComparePolygon, space_Polygon)
+TEST(space_Polygon, ComparePolygon)
 {
     using Poly = space::Polygon<int32_t>;
     using SimplePoly = Poly::TSimplePolugon;
@@ -445,7 +445,7 @@ TEST(ComparePolygon, space_Polygon)
     ASSERT_TRUE(poly != poly1);
 }
 
-TEST(SimpleSegment, space_Segment)
+TEST(space_Segment, SimpleSegment)
 {
     using Point = space::Point<int32_t>;
     using Segment = space::Segment<int32_t>;
@@ -466,7 +466,7 @@ TEST(SimpleSegment, space_Segment)
 }
 
 
-TEST(Compare_Segment, space_Segment)
+TEST(space_Segment, Compare_Segment)
 {
     using Point = space::Point<int32_t>;
     using Segment = space::Segment<int32_t>;
@@ -482,7 +482,7 @@ TEST(Compare_Segment, space_Segment)
     ASSERT_TRUE(segment != segment2);
 }
 
-TEST(HesIntersectSimpleSegment, space_Segment)
+TEST(space_Segment, HesIntersectSimpleSegment)
 {
     using Point = space::Point<int32_t>;
     using Segment = space::Segment<int32_t>;
@@ -497,7 +497,7 @@ TEST(HesIntersectSimpleSegment, space_Segment)
     ASSERT_TRUE(space::util::hesIntersect(segment, segment2));
 }
 
-TEST(hesIntersect_Segment, space_Segment)
+TEST(space_Segment, hesIntersect_Segment)
 {
     using SPoint = space::Point<int32_t>;
     using SSegment = space::Segment<int32_t>;

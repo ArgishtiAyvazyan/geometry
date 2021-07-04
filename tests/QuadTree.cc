@@ -13,19 +13,19 @@
 #include "IndexTestingUtils.h"
 
 
-TEST(QuadTreForFoints, space_QuadTree)
+TEST(space_QuadTree, QuadTreForFoints)
 {
     using value_type = int32_t;
     test_util::queryTest<space::QuadTree<space::Rect<value_type>>, value_type, 10'000>(1'000, 1, 1);
 }
 
-TEST(QuadTreeSimpleTest, space_QuadTree)
+TEST(space_QuadTree, QuadTreeSimpleTest)
 {
     using value_type = int32_t;
     test_util::queryTest<space::QuadTree<space::Rect<value_type>>, value_type, 10'000>(1'000, 1'000, 1'000);
 }
 
-TEST(QuadTreeStresTest, space_QuadTree)
+TEST(space_QuadTree, QuadTreeStresTest)
 {
     using value_type = int32_t;
     test_util::queryTest<space::QuadTree<space::Rect<value_type>>, value_type, 1'000>(1'000, 1, 1'000);
@@ -34,7 +34,7 @@ TEST(QuadTreeStresTest, space_QuadTree)
         1'000, 1'000'000, 1'000'000);
 }
 
-TEST(QuadTreeRemove, space_QuadTree)
+TEST(space_QuadTree, QuadTreeRemove)
 {
     using value_type = int32_t;
     test_util::removeTest<space::QuadTree<space::Rect<value_type>>, value_type, 1'000>(1'000, 1'000, 1'000);
@@ -44,25 +44,25 @@ TEST(QuadTreeRemove, space_QuadTree)
         1'000, 1'000'000, 1'000'000);
 }
 
-TEST(QuadTreeActionsOnEmptyTree, space_QuadTree)
+TEST(space_QuadTree, QuadTreeActionsOnEmptyTree)
 {
     using value_type = int32_t;
     test_util::actionsOnEmptyIndexTest<space::QuadTree<space::Rect<value_type>>, value_type>();
 }
 
-TEST(QuadTreeEmpty, space_QuadTree)
+TEST(space_QuadTree, QuadTreeEmpty)
 {
     using value_type = int32_t;
     test_util::emptyIndexTest<space::QuadTree<space::Rect<value_type>>, value_type>();
 }
 
-TEST(QuadTreeClear, space_QuadTree)
+TEST(space_QuadTree, QuadTreeClear)
 {
     using value_type = int32_t;
     test_util::clearIndexTest<space::QuadTree<space::Rect<value_type>>, value_type>();
 }
 
-TEST(QuadTreeSize, space_QuadTree)
+TEST(space_QuadTree, QuadTreeSize)
 {
     using value_type = int32_t;
     test_util::sizeTest<space::QuadTree<space::Rect<value_type>>, value_type, 10'000>(1'000, 1'000, 1'000);
