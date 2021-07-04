@@ -6,9 +6,8 @@
  * @copyright   Copyright (c) 2021
  */
 
-#define CATCH_CONFIG_MAIN
 
-#include <catch2/catch.hpp>
+#include <gtest/gtest.h>
 
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/geometries/box.hpp>
@@ -50,94 +49,94 @@ auto spaceToBoostRect(const space::Rect<TCrt>& rect)
     return box(point(x1, y1), point(x2, y2));
 }
 
-TEST_CASE("Compare::Point", "[space::Point]")
+TEST(ComparePoint, space_Point)
 {
     space::Point<int32_t> point {50, 13};
     space::Point<int32_t> point1 {0, 0};
 
-    REQUIRE(point == point);
-    REQUIRE_FALSE(point != point);
-    REQUIRE_FALSE(point == point1);
-    REQUIRE(point != point1);
+    ASSERT_TRUE(point == point);
+    ASSERT_FALSE(point != point);
+    ASSERT_FALSE(point == point1);
+    ASSERT_TRUE(point != point1);
 }
 
-TEST_CASE("Cover::Rect::point", "[space::util]")
+TEST(CoverRectPoint, space_util)
 {
     space::Rect<int32_t> rect {{0, 0}, 100, 100};
     space::Point<int32_t> point {50, 50};
-    REQUIRE (space::util::contains(rect, point));
+    ASSERT_TRUE (space::util::contains(rect, point));
     space::util::move(point, 100, 100);
-    REQUIRE_FALSE (space::util::contains(rect, point));
+    ASSERT_FALSE (space::util::contains(rect, point));
 }
 
-TEST_CASE("Cover::Rect", "[space::util]")
+TEST(CoverRect, space_util)
 {
     space::Rect<int32_t> rect1 {{0, 0}, 100, 100};
     space::Rect<int32_t> rect2 {{50, 50}, 10, 10};
-    REQUIRE (space::util::contains(rect1, rect2));
+    ASSERT_TRUE (space::util::contains(rect1, rect2));
     space::util::move(rect2, 100, 100);
-    REQUIRE_FALSE (space::util::contains(rect1, rect2));
+    ASSERT_FALSE (space::util::contains(rect1, rect2));
 }
 
-TEST_CASE("Create::Rect", "[space::util]")
+TEST(CreateRect, space_util)
 {
     space::Point<int32_t> leftBottom {1, 1};
     space::Point<int32_t> rightTop {13, 13};
 
     space::Rect<int32_t> rect {leftBottom, rightTop};
 
-    REQUIRE (space::util::bottomLeftOf(rect) == leftBottom);
-    REQUIRE (space::util::topRightOf(rect) == rightTop);
+    ASSERT_TRUE (space::util::bottomLeftOf(rect) == leftBottom);
+    ASSERT_TRUE (space::util::topRightOf(rect) == rightTop);
 }
 
 
-TEST_CASE("Compare::Rect", "[space::Rect]")
+TEST(CompareRect, space_Rect)
 {
     space::Rect<int32_t> rect {{50, 13}, 100, 100};
     space::Rect<int32_t> rect1 {{0, 0}, 123, 123};
 
-    REQUIRE(rect == rect);
-    REQUIRE_FALSE(rect != rect);
-    REQUIRE_FALSE(rect == rect1);
-    REQUIRE(rect != rect1);
+    ASSERT_TRUE(rect == rect);
+    ASSERT_FALSE(rect != rect);
+    ASSERT_FALSE(rect == rect1);
+    ASSERT_TRUE(rect != rect1);
 }
 
 
-TEST_CASE("Cover::Square::point", "[space::util]")
+TEST(CoverSquarePoint, space_util)
 {
     space::Square<int32_t> rect {{0, 0}, 100};
     space::Point<int32_t> point {50, 50};
-    REQUIRE (space::util::contains(rect, point));
+    ASSERT_TRUE (space::util::contains(rect, point));
     space::util::move(point, 100, 100);
-    REQUIRE_FALSE (space::util::contains(rect, point));
+    ASSERT_FALSE (space::util::contains(rect, point));
 }
 
-TEST_CASE("Cover::Square", "[space::util]")
+TEST(CoverSquare, space_util)
 {
     space::Square<int32_t> rect1 {{0, 0}, 100};
     space::Rect<int32_t> rect2 {{50, 50}, 10, 10};
-    REQUIRE (space::util::contains(rect1, rect2));
+    ASSERT_TRUE (space::util::contains(rect1, rect2));
     space::util::move(rect2, 100, 100);
-    REQUIRE_FALSE (space::util::contains(rect1, rect2));
+    ASSERT_FALSE (space::util::contains(rect1, rect2));
 }
 
-TEST_CASE("Intersects::Rect", "[space::util]")
+TEST(IntersectsRect, space_util)
 {
     space::Rect<int32_t> rect {{50, 13}, 100, 100};
     space::Rect<int32_t> rect1 {{0, 0}, 123, 123};
 
-    REQUIRE(space::util::hesIntersect(rect, rect1));
-    REQUIRE(space::util::hesIntersect(rect1, rect));
+    ASSERT_TRUE(space::util::hesIntersect(rect, rect1));
+    ASSERT_TRUE(space::util::hesIntersect(rect1, rect));
 
     space::util::move(rect1, 149, 110);
 
-    REQUIRE(space::util::hesIntersect(rect, rect1));
-    REQUIRE(space::util::hesIntersect(rect1, rect));
+    ASSERT_TRUE(space::util::hesIntersect(rect, rect1));
+    ASSERT_TRUE(space::util::hesIntersect(rect1, rect));
 
     space::util::move(rect1, 100000, 100000);
 
-    REQUIRE_FALSE(space::util::hesIntersect(rect, rect1));
-    REQUIRE_FALSE(space::util::hesIntersect(rect1, rect));
+    ASSERT_FALSE(space::util::hesIntersect(rect, rect1));
+    ASSERT_FALSE(space::util::hesIntersect(rect1, rect));
 
     for (int64_t i = 0; i < 1'000'000; ++i)
     {
@@ -147,68 +146,68 @@ TEST_CASE("Intersects::Rect", "[space::util]")
                                          std::rand() % 1000};
         const auto boostBox1 = spaceToBoostRect(spaceRect1);
         const auto boostBox2 = spaceToBoostRect(spaceRect2);
-        REQUIRE(space::util::hesIntersect(spaceRect1, spaceRect2)
+        ASSERT_TRUE(space::util::hesIntersect(spaceRect1, spaceRect2)
                 == boost::geometry::intersects(boostBox1, boostBox2));
     }
 }
 
-TEST_CASE("Intersects::Square", "[space::Square]")
+TEST(IntersectsSquare, space_Square)
 {
     space::Rect<int32_t> rect {{50, 13}, 100, 100};
     space::Square<int32_t> rect1 {{0, 0}, 123};
 
-    REQUIRE(space::util::hesIntersect(rect, rect1));
-    REQUIRE(space::util::hesIntersect(rect1, rect));
+    ASSERT_TRUE(space::util::hesIntersect(rect, rect1));
+    ASSERT_TRUE(space::util::hesIntersect(rect1, rect));
 
     space::util::move(rect1, 149, 110);
 
-    REQUIRE(space::util::hesIntersect(rect, rect1));
-    REQUIRE(space::util::hesIntersect(rect1, rect));
+    ASSERT_TRUE(space::util::hesIntersect(rect, rect1));
+    ASSERT_TRUE(space::util::hesIntersect(rect1, rect));
 
     space::util::move(rect1.pos(), 100000, 100000);
 
-    REQUIRE_FALSE(space::util::hesIntersect(rect, rect1));
-    REQUIRE_FALSE(space::util::hesIntersect(rect1, rect));
+    ASSERT_FALSE(space::util::hesIntersect(rect, rect1));
+    ASSERT_FALSE(space::util::hesIntersect(rect1, rect));
 }
 
-TEST_CASE("Compare::Square", "[space::Square]")
+TEST(CompareSquare, space_Square)
 {
     space::Square<int32_t> square {{50, 13}, 100};
     space::Square<int32_t> square1 {{0, 0}, 123};
 
-    REQUIRE(square == square);
-    REQUIRE_FALSE(square != square);
-    REQUIRE_FALSE(square == square1);
-    REQUIRE(square != square1);
+    ASSERT_TRUE(square == square);
+    ASSERT_FALSE(square != square);
+    ASSERT_FALSE(square == square1);
+    ASSERT_TRUE(square != square1);
 }
 
-TEST_CASE("empty::SimplePolygon", "[space::SimplePolygon]")
+TEST(EmptySimplePolygon, space_SimplePolygon)
 {
     using Poly = space::SimplePolygon<int32_t>;
     Poly poly;
-    REQUIRE (poly.empty());
+    ASSERT_TRUE (poly.empty());
     Poly::TPiecewiseLinearCurve boundary {{0, 0},
                                           {1, 1},
                                           {2, 2}};
     Poly poly1 {boundary};
-    REQUIRE_FALSE (poly1.empty());
+    ASSERT_FALSE (poly1.empty());
 }
 
-TEST_CASE("boundaryCurve::SimplePolygon", "[space::SimplePolygon]")
+TEST(BoundaryCurveSimplePolygon, space_SimplePolygon)
 {
     using Poly = space::SimplePolygon<int32_t>;
     Poly poly;
-    REQUIRE_THROWS (poly.boundaryCurve());
+    EXPECT_THROW ((void)poly.boundaryCurve(), std::out_of_range);
 
     Poly::TPiecewiseLinearCurve boundary {{0, 0},
                                           {1, 1},
                                           {2, 2}};
 
     Poly poly1 {boundary};
-    REQUIRE(boundary == poly1.boundaryCurve());
+    ASSERT_TRUE(boundary == poly1.boundaryCurve());
 }
 
-TEST_CASE("move::SimplePolygon", "[space::SimplePolygon]")
+TEST(MoveSimplePolygon, space_SimplePolygon)
 {
     using Poly = space::SimplePolygon<int32_t>;
 
@@ -220,7 +219,7 @@ TEST_CASE("move::SimplePolygon", "[space::SimplePolygon]")
 
     space::util::move(poly, 12, 12);
     const auto& changedBoundary = poly.boundaryCurve();
-    REQUIRE (std::ranges::equal(boundary, changedBoundary
+    ASSERT_TRUE (std::ranges::equal(boundary, changedBoundary
                                 , [](auto point1, const auto& point2)
         {
             space::util::move(point1, 12, 12);
@@ -229,7 +228,7 @@ TEST_CASE("move::SimplePolygon", "[space::SimplePolygon]")
                                ));
 }
 
-TEST_CASE("boundaryBoxOf::SimplePolygon", "[space::SimplePolygon]")
+TEST(BoundaryBoxOfSimplePolygon, space_SimplePolygon)
 {
     using Poly = space::SimplePolygon<int32_t>;
     using Rect = space::Rect<int32_t>;
@@ -242,11 +241,10 @@ TEST_CASE("boundaryBoxOf::SimplePolygon", "[space::SimplePolygon]")
 
     Poly poly {boundary};
     const auto bBox = space::util::boundaryBoxOf(poly);
-    REQUIRE(bBox == Rect {{0,   0},
-                          {124, 444}});
+    ASSERT_TRUE((bBox == Rect {{0,   0}, {124, 444}}));
 }
 
-TEST_CASE("Compare::SimplePolygon", "[space::SimplePolygon]")
+TEST(CompareSimplePolygon, space_SimplePolygon)
 {
     using Poly = space::SimplePolygon<int32_t>;
 
@@ -259,42 +257,42 @@ TEST_CASE("Compare::SimplePolygon", "[space::SimplePolygon]")
     Poly poly {boundary};
     Poly poly1;
 
-    REQUIRE(poly == poly);
-    REQUIRE_FALSE(poly != poly);
-    REQUIRE_FALSE(poly == poly1);
-    REQUIRE(poly != poly1);
+    ASSERT_TRUE(poly == poly);
+    ASSERT_FALSE(poly != poly);
+    ASSERT_FALSE(poly == poly1);
+    ASSERT_TRUE(poly != poly1);
 }
 
-TEST_CASE("empty::Polygon", "[space::Polygon]")
+TEST(EmptyPolygon, space_Polygon)
 {
     using Poly = space::Polygon<int32_t>;
     using SimplePoly = space::SimplePolygon<int32_t>;
     Poly poly;
-    REQUIRE (poly.empty());
-    REQUIRE_FALSE (poly.hasHoles());
+    ASSERT_TRUE (poly.empty());
+    ASSERT_FALSE (poly.hasHoles());
     Poly::TSimplePolugon boundary {{{0, 0},
                                        {1, 1},
                                        {2, 2}}};
     Poly poly1 {boundary};
-    REQUIRE_FALSE (poly1.empty());
-    REQUIRE_FALSE (poly1.hasHoles());
+    ASSERT_FALSE (poly1.empty());
+    ASSERT_FALSE (poly1.hasHoles());
 
     space::Vector<SimplePoly> holes;
     holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
     holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
 
     Poly poly2 {boundary, holes};
-    REQUIRE_FALSE (poly2.empty());
-    REQUIRE (poly2.hasHoles());
+    ASSERT_FALSE (poly2.empty());
+    ASSERT_TRUE (poly2.hasHoles());
 }
 
-TEST_CASE("hasHoles::Polygon", "[space::Polygon]")
+TEST(HasHolesPolygon, space_Polygon)
 {
     using Poly = space::Polygon<int32_t>;
     using SimplePoly = space::SimplePolygon<int32_t>;
 
     Poly poly;
-    REQUIRE_FALSE (poly.hasHoles());
+    ASSERT_FALSE (poly.hasHoles());
     Poly::TSimplePolugon boundary {{{0, 0},
                                        {1, 1},
                                        {2, 2}}};
@@ -303,38 +301,39 @@ TEST_CASE("hasHoles::Polygon", "[space::Polygon]")
     holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
 
     Poly poly1 {boundary, holes};
-    REQUIRE_FALSE (poly1.empty());
-    REQUIRE (poly1.hasHoles());
+    ASSERT_FALSE (poly1.empty());
+    ASSERT_TRUE (poly1.hasHoles());
 }
 
-TEST_CASE("boundary::Polygon", "[space::Polygon]")
+TEST(boundary_Polygon, space_Polygon)
 {
     using Poly = space::Polygon<int32_t>;
 
     Poly poly;
-    REQUIRE_THROWS (poly.boundary());
+    EXPECT_THROW((void)poly.boundary(), std::out_of_range);
 
     Poly::TSimplePolugon boundary {{{0, 0},
                                        {1, 1},
                                        {2, 2}}};
 
+
     Poly poly1 {boundary};
-    REQUIRE(boundary == poly1.boundary());
+    ASSERT_TRUE(boundary == poly1.boundary());
 }
 
-TEST_CASE("holes::Polygon", "[space::Polygon]")
+TEST(HolesPolygon, space_Polygon)
 {
     using Poly = space::Polygon<int32_t>;
     using SimplePoly = space::SimplePolygon<int32_t>;
 
     Poly poly;
-    REQUIRE (poly.holes().empty());
+    ASSERT_TRUE (poly.holes().empty());
 
     Poly::TSimplePolugon boundary {{{0, 0},
                                        {1, 1},
                                        {2, 2}}};
     Poly poly1 {boundary};
-    REQUIRE (poly1.holes().empty());
+    ASSERT_TRUE (poly1.holes().empty());
 
     space::Vector<SimplePoly> holes;
     holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
@@ -342,11 +341,11 @@ TEST_CASE("holes::Polygon", "[space::Polygon]")
 
     Poly poly2 {boundary, holes};
     auto spanHoles = poly2.holes();
-    REQUIRE_FALSE (spanHoles.empty());
-    REQUIRE(std::size(spanHoles) == std::size(holes));
+    ASSERT_FALSE (spanHoles.empty());
+    ASSERT_TRUE(std::size(spanHoles) == std::size(holes));
 }
 
-TEST_CASE("move::Polygon", "[space::Polygon]")
+TEST(MovePolygon, space_Polygon)
 {
     using Poly = space::Polygon<int32_t>;
     using SimplePoly = space::SimplePolygon<int32_t>;
@@ -368,12 +367,12 @@ TEST_CASE("move::Polygon", "[space::Polygon]")
         return point1 == point2;
     };
 
-    REQUIRE (std::ranges::equal(boundary.boundaryCurve(), poly.boundary().boundaryCurve(), equal));
+    ASSERT_TRUE (std::ranges::equal(boundary.boundaryCurve(), poly.boundary().boundaryCurve(), equal));
 
-    REQUIRE (std::ranges::equal(holes, poly.holes(), equal));
+    ASSERT_TRUE (std::ranges::equal(holes, poly.holes(), equal));
 }
 
-TEST_CASE("boundaryBoxOf::Polygon", "[space::Polygon]")
+TEST(BoundaryBoxOfPolygon, space_Polygon)
 {
     using Poly = space::Polygon<int32_t>;
     using Rect = space::Rect<int32_t>;
@@ -391,11 +390,11 @@ TEST_CASE("boundaryBoxOf::Polygon", "[space::Polygon]")
 
     Poly poly {boundary, holes};
     const auto bBox = space::util::boundaryBoxOf(poly);
-    REQUIRE(bBox == Rect {{0,   0},
-                          {124, 444}});
+    Rect target {{0,   0}, {124, 444}};
+    ASSERT_EQ(bBox , target);
 }
 
-TEST_CASE("Compare::Polygon", "[space::Polygon]")
+TEST(ComparePolygon, space_Polygon)
 {
     using Poly = space::Polygon<int32_t>;
     using SimplePoly = Poly::TSimplePolugon;
@@ -413,13 +412,13 @@ TEST_CASE("Compare::Polygon", "[space::Polygon]")
     Poly poly {boundary, holes};
 
     Poly poly1;
-    REQUIRE(poly == poly);
-    REQUIRE_FALSE(poly != poly);
-    REQUIRE_FALSE(poly == poly1);
-    REQUIRE(poly != poly1);
+    ASSERT_TRUE(poly == poly);
+    ASSERT_FALSE(poly != poly);
+    ASSERT_FALSE(poly == poly1);
+    ASSERT_TRUE(poly != poly1);
 }
 
-TEST_CASE("Simple::Segment", "[space::Segment]")
+TEST(SimpleSegment, space_Segment)
 {
     using Point = space::Point<int32_t>;
     using Segment = space::Segment<int32_t>;
@@ -428,17 +427,19 @@ TEST_CASE("Simple::Segment", "[space::Segment]")
     Point p2 {4, 4};
     Segment segment {p1, p2};
 
-    REQUIRE(p1 == segment.first);
-    REQUIRE(p2 == segment.second);
+    ASSERT_TRUE(p1 == segment.first);
+    ASSERT_TRUE(p2 == segment.second);
 
     Segment segment2 {{3, 3},
                       {5, 5}};
-    REQUIRE(Point {3, 3} == segment2.first);
-    REQUIRE(Point {5, 5} == segment2.second);
+    Point target1{3, 3};
+    Point target2{5, 5};
+    ASSERT_EQ(target1, segment2.first);
+    ASSERT_EQ(target2, segment2.second);
 }
 
 
-TEST_CASE("Compare::Segment", "[space::Segment]")
+TEST(Compare_Segment, space_Segment)
 {
     using Point = space::Point<int32_t>;
     using Segment = space::Segment<int32_t>;
@@ -448,13 +449,13 @@ TEST_CASE("Compare::Segment", "[space::Segment]")
     Segment segment {p1, p2};
     Segment segment2 {p2, p1};
 
-    REQUIRE(segment == segment);
-    REQUIRE_FALSE(segment != segment);
-    REQUIRE_FALSE(segment == segment2);
-    REQUIRE(segment != segment2);
+    ASSERT_TRUE(segment == segment);
+    ASSERT_FALSE(segment != segment);
+    ASSERT_FALSE(segment == segment2);
+    ASSERT_TRUE(segment != segment2);
 }
 
-TEST_CASE("hesIntersect(Simple)::Segment", "[space::Segment]")
+TEST(HesIntersectSimpleSegment, space_Segment)
 {
     using Point = space::Point<int32_t>;
     using Segment = space::Segment<int32_t>;
@@ -466,10 +467,10 @@ TEST_CASE("hesIntersect(Simple)::Segment", "[space::Segment]")
     Point q2 {4, 1};
     Segment segment2 {p2, q2};
 
-    REQUIRE(space::util::hesIntersect(segment, segment2));
+    ASSERT_TRUE(space::util::hesIntersect(segment, segment2));
 }
 
-TEST_CASE("hesIntersect::Segment", "[space::Segment]")
+TEST(hesIntersect_Segment, space_Segment)
 {
     using SPoint = space::Point<int32_t>;
     using SSegment = space::Segment<int32_t>;
@@ -488,7 +489,14 @@ TEST_CASE("hesIntersect::Segment", "[space::Segment]")
         BSegment bSegment2 {spaceToBoostPoint(p2), spaceToBoostPoint(q2)};
 
         const bool result = boost::geometry::intersects(bSegment1, bSegment2);
-        REQUIRE(result == space::util::hesIntersect(sSegment1, sSegment2));
-        REQUIRE(result == space::util::hesIntersect(sSegment2, sSegment1));
+        ASSERT_TRUE(result == space::util::hesIntersect(sSegment1, sSegment2));
+        ASSERT_TRUE(result == space::util::hesIntersect(sSegment2, sSegment1));
     }
+}
+
+
+int main(int argc, char **argv)
+{
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

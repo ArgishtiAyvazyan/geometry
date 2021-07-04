@@ -11,6 +11,14 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/b
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/bin/libs)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/bin)
 
+########################################################################################################################
+# Tests sources.
+########################################################################################################################
+
+IF (BUILD_UNIT_TESTS)
+    add_subdirectory ("tests")
+ENDIF()
+
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     # using Clang
     add_compile_options(
@@ -165,11 +173,4 @@ endif()
 
 add_subdirectory("include")
 
-########################################################################################################################
-# Tests sources.
-########################################################################################################################
 
-IF (BUILD_UNIT_TESTS)
-    add_subdirectory ("tests")
-    add_subdirectory ("thirdparty/Catch2")
-ENDIF()

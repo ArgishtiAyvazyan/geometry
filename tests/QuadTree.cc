@@ -6,26 +6,26 @@
  * @copyright   Copyright (c) 2021
  */
 
-#define CATCH_CONFIG_MAIN
 
-#include <catch2/catch.hpp>
+#include <gtest/gtest.h>
+
 
 #include "IndexTestingUtils.h"
 
 
-TEST_CASE("QuadTree for points", "[space::QuadTree]")
+TEST(QuadTreForFoints, space_QuadTree)
 {
     using value_type = int32_t;
     test_util::queryTest<space::QuadTree<space::Rect<value_type>>, value_type, 10'000>(1'000, 1, 1);
 }
 
-TEST_CASE("QuadTree simple test.", "[space::QuadTree]")
+TEST(QuadTreeSimpleTest, space_QuadTree)
 {
     using value_type = int32_t;
     test_util::queryTest<space::QuadTree<space::Rect<value_type>>, value_type, 10'000>(1'000, 1'000, 1'000);
 }
 
-TEST_CASE("QuadTree stres test.", "[space::QuadTree]")
+TEST(QuadTreeStresTest, space_QuadTree)
 {
     using value_type = int32_t;
     test_util::queryTest<space::QuadTree<space::Rect<value_type>>, value_type, 1'000>(1'000, 1, 1'000);
@@ -34,7 +34,7 @@ TEST_CASE("QuadTree stres test.", "[space::QuadTree]")
         1'000, 1'000'000, 1'000'000);
 }
 
-TEST_CASE("QuadTree remove.", "[space::QuadTree]")
+TEST(QuadTreeRemove, space_QuadTree)
 {
     using value_type = int32_t;
     test_util::removeTest<space::QuadTree<space::Rect<value_type>>, value_type, 1'000>(1'000, 1'000, 1'000);
@@ -44,26 +44,33 @@ TEST_CASE("QuadTree remove.", "[space::QuadTree]")
         1'000, 1'000'000, 1'000'000);
 }
 
-TEST_CASE("QuadTree actions on empty tree", "[space::QuadTree]")
+TEST(QuadTreeActionsOnEmptyTree, space_QuadTree)
 {
     using value_type = int32_t;
     test_util::actionsOnEmptyIndexTest<space::QuadTree<space::Rect<value_type>>, value_type>();
 }
 
-TEST_CASE("QuadTree empty", "[space::QuadTree]")
+TEST(QuadTreeEmpty, space_QuadTree)
 {
     using value_type = int32_t;
     test_util::emptyIndexTest<space::QuadTree<space::Rect<value_type>>, value_type>();
 }
 
-TEST_CASE("QuadTree clear", "[space::QuadTree]")
+TEST(QuadTreeClear, space_QuadTree)
 {
     using value_type = int32_t;
     test_util::clearIndexTest<space::QuadTree<space::Rect<value_type>>, value_type>();
 }
 
-TEST_CASE("QuadTree size", "[space::QuadTree]")
+TEST(QuadTreeSize, space_QuadTree)
 {
     using value_type = int32_t;
     test_util::sizeTest<space::QuadTree<space::Rect<value_type>>, value_type, 10'000>(1'000, 1'000, 1'000);
+}
+
+
+int main(int argc, char **argv)
+{
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

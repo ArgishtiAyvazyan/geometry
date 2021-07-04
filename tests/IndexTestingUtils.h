@@ -1,5 +1,8 @@
 #pragma once
 
+#include <gtest/gtest.h>
+
+
 #include <random>
 #include <algorithm>
 #include <iostream>
@@ -7,8 +10,6 @@
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/index/rtree.hpp>
-
-#include <catch2/catch.hpp>
 
 #include "Rect.h"
 #include "Square.h"
@@ -94,12 +95,12 @@ void queryTest(TCrt maxPos, TCrt maxRectWidth, TCrt maxRectHeight)
 
     for (const auto& rect : initialRects)
     {
-        REQUIRE_FALSE(index.contains(rect));
-        REQUIRE(index.insert(rect));
-        REQUIRE(index.contains(rect));
+        ASSERT_FALSE(index.contains(rect));
+        ASSERT_TRUE(index.insert(rect));
+        ASSERT_TRUE(index.contains(rect));
         box b = spaceToBoostRect(rect);
         rtree.insert(std::make_pair(b, 0));
-        REQUIRE(index.size() == rtree.size());
+        ASSERT_TRUE(index.size() == rtree.size());
     }
 
     for (size_t i = 0; i < Count; ++i)
@@ -121,7 +122,7 @@ void queryTest(TCrt maxPos, TCrt maxRectWidth, TCrt maxRectHeight)
             std::cout << "Query rect: " << queryRect << ": Index : " << i << std::endl;
             printDiff(quadTreeQueryRes, rTreeQueryRes);
         }
-        REQUIRE(std::size(quadTreeQueryRes) == std::size(rTreeQueryRes));
+        ASSERT_TRUE(std::size(quadTreeQueryRes) == std::size(rTreeQueryRes));
     }
 }
 
@@ -132,7 +133,7 @@ void removeTest(TCrt maxPos, TCrt maxRectWidth, TCrt maxRectHeight)
     size_t size = 0;
     for (size_t i = 0; i < Count; ++i)
     {
-        REQUIRE(index.size() == size);
+        ASSERT_TRUE(index.size() == size);
         if (index.insert(getRandRect(maxPos, maxRectWidth, maxRectHeight)))
         {
             ++size;
@@ -147,15 +148,15 @@ void removeTest(TCrt maxPos, TCrt maxRectWidth, TCrt maxRectHeight)
         index.query(removeRect, std::back_inserter(quadTreeQueryRes));
         for (auto& rect : quadTreeQueryRes)
         {
-            REQUIRE(index.contains(rect));
+            ASSERT_TRUE(index.contains(rect));
             index.remove(rect);
-            REQUIRE_FALSE(index.contains(rect));
+            ASSERT_FALSE(index.contains(rect));
         }
         size -= quadTreeQueryRes.size();
-        REQUIRE(index.size() == size);
+        ASSERT_TRUE(index.size() == size);
         std::vector<space::Rect<TCrt>> quadTreeQueryRes2;
         index.query(removeRect, std::back_inserter(quadTreeQueryRes2));
-        REQUIRE(quadTreeQueryRes2.empty());
+        ASSERT_TRUE(quadTreeQueryRes2.empty());
     }
 }
 
@@ -166,10 +167,10 @@ void actionsOnEmptyIndexTest()
     TIndex index;
     space::Rect<TCrt> rect {{13, 13}, 13, 13};
 
-    REQUIRE_FALSE(index.contains(rect));
+    ASSERT_FALSE(index.contains(rect));
     std::vector<space::Rect<TCrt>> quadTreeQueryRes;
     index.query(rect, std::back_inserter(quadTreeQueryRes));
-    REQUIRE(quadTreeQueryRes.empty());
+    ASSERT_TRUE(quadTreeQueryRes.empty());
     index.remove(rect);
 }
 
@@ -177,28 +178,28 @@ template <typename TIndex, typename TCrt>
 void emptyIndexTest()
 {
     TIndex index;
-    REQUIRE(index.empty());
+    ASSERT_TRUE(index.empty());
     space::Rect<TCrt> rect {{13, 13}, 13, 13};
     index.insert(rect);
-    REQUIRE_FALSE(index.empty());
+    ASSERT_FALSE(index.empty());
     index.remove({{14, 13}, 13, 13});
-    REQUIRE_FALSE(index.empty());
+    ASSERT_FALSE(index.empty());
     index.remove({{13, 13}, 13, 13});
-    REQUIRE(index.empty());
+    ASSERT_TRUE(index.empty());
 }
 
 template <typename TIndex, typename TCrt>
 void clearIndexTest()
 {
     TIndex index;
-    REQUIRE(index.empty());
+    ASSERT_TRUE(index.empty());
     for (size_t i = 0; i < 100; ++i)
     {
         index.insert(getRandRect(100, 100, 100));
     }
-    REQUIRE_FALSE(index.empty());
+    ASSERT_FALSE(index.empty());
     index.clear();
-    REQUIRE(index.empty());
+    ASSERT_TRUE(index.empty());
 }
 
 template <typename TIndex, typename TCrt, size_t Count>
@@ -214,14 +215,14 @@ void sizeTest(TCrt maxPos, TCrt maxRectWidth, TCrt maxRectHeight)
     size_t size = 0;
     for (const auto& rect : initialRects)
     {
-        REQUIRE(index.size() == size);
+        ASSERT_TRUE(index.size() == size);
         ++size;
         index.insert(rect);
     }
 
     for (const auto& rect : initialRects)
     {
-        REQUIRE(index.size() == size);
+        ASSERT_TRUE(index.size() == size);
         --size;
         index.remove(rect);
     }
