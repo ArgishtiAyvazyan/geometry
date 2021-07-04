@@ -13,6 +13,7 @@
 #include "Definitions.h"
 #include "Point.h"
 #include "Rect.h"
+#include "Segment.h"
 
 namespace space
 {
@@ -155,7 +156,55 @@ constexpr space::Rect<TCrt> boundaryBoxOf(const SimplePolygon<TCrt>& poly) noexc
     auto[leftBottomIt, rightTopIt] = std::ranges::minmax_element(poly.boundaryCurve());
     return space::Rect<TCrt>(*leftBottomIt, *rightTopIt);
 }
+
+/**
+ * @brief  Returns true if the given point is inside or on the edge of the Simple Polygon, otherwise returns false.
+ *
+ * @tparam  TCrt The type of coordinates.
+ * @param   poly The given Simple Polygon.
+ * @param   point The given point.
+ * @return  true if contains, otherwise returns false.
+ */
+template <typename TCrt>
+[[nodiscard]]
+constexpr bool contains(const SimplePolygon<TCrt>& poly, const Point<TCrt>& point) noexcept
+{
+    // Create a horizontal line from point to infinity.
+    const Segment<TCrt> horizontalLine { point, Point<TCrt>{std::numeric_limits<TCrt>::max(), point.y()} };
+
+    // Count intersections of the above line with sides of polygon
+    size_t count = 0;
+    size_t i = 0;
+
+    const auto& boundary = poly.boundaryCurve();
+    auto numOfVertex = std::size(boundary);
+
+    if (numOfVertex < 3)
+    {
+        return false;
+    }
+
+    do
+    {
+        const auto next = (i + 1) % numOfVertex;
+
+        if (hesIntersect(Segment{boundary[i], boundary[next]}, horizontalLine))
+        {
+            if (impl::EOrientation::collinear == impl::orientation(boundary[i], point, boundary[next]))
+            {
+                return impl::onSegment(Segment{boundary[i], boundary[next]}, point);
+            }
+            ++count;
+        }
+        i = next;
+    } while (i != 0);
+
+    // Return true if count is odd, false otherwise
+    return count & 1;
+}
+
 } // namespace util
+
 
 /**
  * @brief   The ostream operators for working with streams.

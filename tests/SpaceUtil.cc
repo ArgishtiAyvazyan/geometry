@@ -14,6 +14,7 @@
 #include <boost/geometry/geometries/segment.hpp>
 #include <boost/geometry/algorithms/intersection.hpp>
 
+
 #include <boost/geometry/index/rtree.hpp>
 
 
@@ -261,6 +262,32 @@ TEST(CompareSimplePolygon, space_SimplePolygon)
     ASSERT_FALSE(poly != poly);
     ASSERT_FALSE(poly == poly1);
     ASSERT_TRUE(poly != poly1);
+}
+
+TEST(ContainsPointSimplePolygonSimpleCases, space_SimplePolygon)
+{
+    using Poly = space::SimplePolygon<int32_t>;
+    using Bound = Poly::TPiecewiseLinearCurve;
+    using Point = space::Point<int32_t>;
+
+    std::vector<std::pair<space::SimplePolygon<int32_t>, std::pair<space::Point<int32_t>, bool>>> testSet
+        {
+                {Poly{Bound{{0, 0}, {10, 0}, {10, 10}, {0, 10}}}, {Point{20, 20}, false}},
+                {Poly{Bound{{0, 0}, {10, 0}, {10, 10}, {0, 10}}}, {Point{5, 5}, true}},
+                {Poly{Bound{{0, 0}, {5, 5}, {5, 0}}}, {Point{3, 3}, true}},
+                {Poly{Bound{{0, 0}, {5, 5}, {5, 0}}}, {Point{5, 1}, true}},
+                {Poly{Bound{{0, 0}, {5, 5}, {5, 0}}}, {Point{8, 1}, false}},
+                {Poly{Bound{{0, 0}, {10, 0}, {10, 10}, {0, 10}}}, {Point{-1,10}, false}},
+                {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{12,1}, false}},
+                {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{5,4}, true}},
+                {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{9,2}, true}},
+                {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{10,4}, true}},
+        };
+
+    for (const auto& [poly, pointAndRes] : testSet)
+    {
+        ASSERT_EQ(space::util::contains(poly, pointAndRes.first), pointAndRes.second);
+    }
 }
 
 TEST(EmptyPolygon, space_Polygon)

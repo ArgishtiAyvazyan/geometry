@@ -81,7 +81,7 @@ namespace impl
  * @return          true if the point lies on the line, otherwise false.
  */
 template <typename TCrt>
-constexpr bool onSegment(const Segment<TCrt>& segment, const Point <TCrt>& point)
+constexpr bool onSegment(const Segment<TCrt>& segment, const Point <TCrt>& point) noexcept
 {
     const auto[p, q] = segment;
     return ((point.x() <= std::max(p.x(), q.x()))
@@ -106,7 +106,7 @@ enum class EOrientation
  * @return      The orientation (EOrientation::collinear, EOrientation::clockwise, EOrientation::counterclockwise)
  */
 template <typename TCrt>
-EOrientation orientation(const Point <TCrt>& p, const Point <TCrt>& q, const Point <TCrt>& r)
+EOrientation orientation(const Point <TCrt>& p, const Point <TCrt>& q, const Point <TCrt>& r) noexcept
 {
     const TCrt val = (q.y() - p.y()) * (r.x() - q.x())
                      - (q.x() - p.x()) * (r.y() - q.y());
