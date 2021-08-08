@@ -477,6 +477,58 @@ TEST(space_Polygon, ComparePolygon)
     ASSERT_TRUE(poly != poly1);
 }
 
+TEST(space_Polygon, ContainsPolygon)
+{
+    using Poly = space::Polygon<int32_t>;
+    using SimplePoly = Poly::TSimplePolygon;
+
+    SimplePoly boundary {{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}};
+
+    space::Vector<SimplePoly> holes;
+    holes.push_back(SimplePoly {{{4, 3}, {5, 5}, {7, 4}, { 6, 2 }}});
+    holes.push_back(SimplePoly {{{9, 2}, {9, 3}, {11, 5}, { 11, 4 }}});
+
+    Poly poly {boundary, holes};
+
+    ASSERT_TRUE(space::util::contains(poly, { 3, 2 }));
+    ASSERT_TRUE(space::util::contains(poly, { 8, 4 }));
+    ASSERT_TRUE(space::util::contains(poly, { 8, 6 }));
+    ASSERT_TRUE(space::util::contains(poly, { 11, 3 }));
+    ASSERT_FALSE(space::util::contains(poly, { 20, 20 }));
+    ASSERT_FALSE(space::util::contains(poly, { 1, 1 }));
+    ASSERT_FALSE(space::util::contains(poly, { 2, 2 }));
+    ASSERT_FALSE(space::util::contains(poly, { 5, 3 }));
+    ASSERT_FALSE(space::util::contains(poly, { 6, 4 }));
+    ASSERT_FALSE(space::util::contains(poly, { 10, 4 }));
+}
+
+TEST(space_Polygon, ContainsPolygonVertexContains)
+{
+    using Poly = space::Polygon<int32_t>;
+    using SimplePoly = Poly::TSimplePolygon;
+
+    SimplePoly boundary {{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}};
+
+    space::Vector<SimplePoly> holes;
+    holes.push_back(SimplePoly {{{4, 3}, {5, 5}, {7, 4}, { 6, 2 }}});
+    holes.push_back(SimplePoly {{{9, 2}, {9, 3}, {11, 5}, { 11, 4 }}});
+
+    Poly poly {boundary, holes};
+
+    for (const auto& vertex : poly.boundary().boundaryCurve())
+    {
+        ASSERT_TRUE(space::util::contains(poly, vertex));
+    }
+
+    for (const auto& hole : poly.holes())
+    {
+        for (const auto& vertex : hole.boundaryCurve())
+        {
+            ASSERT_FALSE(space::util::contains(poly, vertex));
+        }
+    }
+}
+
 TEST(space_Segment, SimpleSegment)
 {
     using Point = space::Point<int32_t>;

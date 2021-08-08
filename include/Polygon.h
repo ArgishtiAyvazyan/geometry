@@ -203,6 +203,33 @@ constexpr space::Rect<TCrt> boundaryBoxOf(const Polygon<TCrt>& poly) noexcept
     return boundaryBoxOf(poly.boundary());
 }
 
+/**
+ * @brief   Returns true if the given point is inside or on the edge of the Polygon,
+ *          otherwise returns false.
+ *
+ * @details Calculates whether a point is inside a boundary simple polygon and outside of holes.
+ *          The running time linearly depends on the number of vertices in the polygon and holes.
+ * @tparam  TCrt The type of coordinates.
+ * @param   poly The given Polygon.
+ * @param   point The given point.
+ * @return  true if contains, otherwise returns false.
+ */
+template <typename TCrt>
+[[nodiscard]]
+constexpr bool contains(const Polygon<TCrt>& poly, const Point<TCrt>& point) noexcept
+{
+    if (poly.empty() || !contains(poly.boundary(), point))
+    {
+        return false;
+    }
+
+    return std::ranges::none_of(poly.holes()
+        , [point](const auto& simplePolygon)
+        {
+           return contains(simplePolygon, point);
+        });
+}
+
 } // namespace util
 
 /**
