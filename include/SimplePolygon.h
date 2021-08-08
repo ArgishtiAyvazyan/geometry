@@ -10,6 +10,8 @@
 
 #include <algorithm>
 #include <iterator>
+#include <optional>
+#include <iostream>
 
 #include "Definitions.h"
 #include "Point.h"
@@ -216,10 +218,15 @@ constexpr bool contains(const SimplePolygon<TCrt>& poly, const Point<TCrt>& poin
             {
                 return impl::onSegment(polygonEdge, point);
             }
-            if (!impl::onSegment(horizontalLine, polygonEdge.second))
+            if (impl::onSegment(horizontalLine, polygonEdge.second))
             {
-                ++count;
+                if (impl::orientation(point, polygonEdge.second, polygonEdge.first)
+                    == impl::orientation(boundary[(i + 2) % numOfVertex], polygonEdge.second, point))
+                {
+                    ++count;
+                }
             }
+            ++count;
         }
 
         i = next;

@@ -299,6 +299,8 @@ TEST(space_SimplePolygon, ContainsPointSimplePolygonSimpleCases)
                 {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{11, 6}, false}},
                 {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{1, 6}, false}},
                 {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{1, 3}, false}},
+                {Poly{Bound{{4, 3}, {5, 5}, {7, 4}, { 6, 2 }}}, {Point{3, 5}, false}},
+                {Poly{Bound{{4, 3}, {5, 5}, {7, 4}, { 6, 2 }}}, {Point{2, 3}, false}},
         };
 
     for (const auto& [poly, pointAndRes] : testSet)
@@ -307,6 +309,15 @@ TEST(space_SimplePolygon, ContainsPointSimplePolygonSimpleCases)
         {
             std::cout << poly << " -> " << pointAndRes.first << std::endl;
             ASSERT_EQ(space::util::contains(poly, pointAndRes.first), pointAndRes.second);
+        }
+
+        for (const auto& vertex : poly.boundaryCurve())
+        {
+            if (!space::util::contains(poly, vertex))
+            {
+                std::cout << poly << vertex << std::endl;
+                ASSERT_TRUE(false);
+            }
         }
     }
 }
