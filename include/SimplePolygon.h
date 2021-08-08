@@ -9,6 +9,7 @@
 #pragma once
 
 #include <algorithm>
+#include <iterator>
 
 #include "Definitions.h"
 #include "Point.h"
@@ -157,6 +158,25 @@ constexpr space::Rect<TCrt> boundaryBoxOf(const SimplePolygon<TCrt>& poly) noexc
     return space::Rect<TCrt>(*leftBottomIt, *rightTopIt);
 }
 
+namespace impl
+{
+/**
+ * @internal
+ * @brief       Returns number that can be used as infinity for the given polygon.
+ *
+ * @details     Finds the biggest x-axis coordinate in a polygon, increments it by 1, then returns.
+ * @tparam TCrt The type of coordinates.
+ * @param poly  The given polygon.
+ * @return      Pseudo infinity number.
+ */
+template <typename TCrt>
+TCrt infinityXAxisFor(const SimplePolygon<TCrt>& poly) noexcept
+{
+    space::Rect boundingBox = space::util::boundaryBoxOf(poly);
+    return space::util::topRightOf(boundingBox).x() + 1;
+}
+} // namespace impl
+
 /**
  * @brief  Returns true if the given point is inside or on the edge of the Simple Polygon, otherwise returns false.
  *
@@ -170,7 +190,8 @@ template <typename TCrt>
 constexpr bool contains(const SimplePolygon<TCrt>& poly, const Point<TCrt>& point) noexcept
 {
     // Create a horizontal line from point to infinity.
-    const Segment<TCrt> horizontalLine { point, Point<TCrt>{std::numeric_limits<TCrt>::max(), point.y()} };
+    const auto infinity = impl::infinityXAxisFor(poly);
+    const Segment<TCrt> horizontalLine { point, Point<TCrt>{infinity, point.y()} };
 
     // Count intersections of the above line with sides of polygon
     size_t count = 0;
@@ -187,15 +208,20 @@ constexpr bool contains(const SimplePolygon<TCrt>& poly, const Point<TCrt>& poin
     do
     {
         const auto next = (i + 1) % numOfVertex;
-
-        if (hesIntersect(Segment{boundary[i], boundary[next]}, horizontalLine))
+        Segment polygonEdge {boundary[i], boundary[next]};
+        if (hesIntersect(polygonEdge, horizontalLine))
         {
-            if (impl::EOrientation::collinear == impl::orientation(boundary[i], point, boundary[next]))
+            if (impl::EOrientation::collinear
+                == impl::orientation(polygonEdge.first, point, polygonEdge.second))
             {
-                return impl::onSegment(Segment{boundary[i], boundary[next]}, point);
+                return impl::onSegment(polygonEdge, point);
             }
-            ++count;
+            if (!impl::onSegment(horizontalLine, polygonEdge.second))
+            {
+                ++count;
+            }
         }
+
         i = next;
     } while (i != 0);
 

@@ -279,14 +279,35 @@ TEST(space_SimplePolygon, ContainsPointSimplePolygonSimpleCases)
                 {Poly{Bound{{0, 0}, {5, 5}, {5, 0}}}, {Point{8, 1}, false}},
                 {Poly{Bound{{0, 0}, {10, 0}, {10, 10}, {0, 10}}}, {Point{-1,10}, false}},
                 {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{12,1}, false}},
-                {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{5,4}, true}},
                 {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{9,2}, true}},
                 {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{10,4}, true}},
+                {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{11,4}, false}},
+                {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{5, 4}, true}},
+                {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{6, 4}, true}},
+                {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{0, 4}, false}},
+                {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{8, 4}, true}},
+                {Poly{Bound{{1, 1}, {2, 5}, {7, 6}, {10, 4}, {9, 2}}}, {Point{11, 4}, false}},
+                {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{5, 6}, true}},
+                {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{6, 6}, true}},
+                {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{10, 6}, true}},
+                {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{12, 5}, true}},
+                {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{11, 4}, true}},
+                {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{2, 1}, true}},
+                {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{4, 1}, true}},
+                {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{1, 1}, false}},
+                {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{11, 1}, false}},
+                {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{11, 6}, false}},
+                {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{1, 6}, false}},
+                {Poly{Bound{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}}, {Point{1, 3}, false}},
         };
 
     for (const auto& [poly, pointAndRes] : testSet)
     {
-        ASSERT_EQ(space::util::contains(poly, pointAndRes.first), pointAndRes.second);
+        if (space::util::contains(poly, pointAndRes.first) != pointAndRes.second)
+        {
+            std::cout << poly << " -> " << pointAndRes.first << std::endl;
+            ASSERT_EQ(space::util::contains(poly, pointAndRes.first), pointAndRes.second);
+        }
     }
 }
 

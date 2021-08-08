@@ -13,6 +13,7 @@
 #include <vector>
 #include <stack>
 #include <span>
+#include <stdexcept>
 #include <boost/container/flat_set.hpp>
 
 namespace space
