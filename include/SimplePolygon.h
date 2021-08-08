@@ -180,8 +180,15 @@ TCrt infinityXAxisFor(const SimplePolygon<TCrt>& poly) noexcept
 } // namespace impl
 
 /**
- * @brief  Returns true if the given point is inside or on the edge of the Simple Polygon, otherwise returns false.
+ * @brief   Returns true if the given point is inside or on the edge of the Simple Polygon,
+ *          otherwise returns false.
  *
+ * @details Calculates whether a point is inside a simple polygon. A polygon is defined by a
+ *          sequence of points (boundary curve). Staying inside is determined by the even-odd rule.
+ *          If we take a ray that starts at a point and goes off to infinity (in any direction),
+ *          we count the number of intersections. If this number is odd, the point is inside;
+ *          otherwise, it is outside. The running time linearly depends on the number of vertices
+ *          in the polygon.
  * @tparam  TCrt The type of coordinates.
  * @param   poly The given Simple Polygon.
  * @param   point The given point.
