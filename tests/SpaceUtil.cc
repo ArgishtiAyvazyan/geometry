@@ -329,7 +329,7 @@ TEST(space_Polygon, EmptyPolygon)
     Poly poly;
     ASSERT_TRUE (poly.empty());
     ASSERT_FALSE (poly.hasHoles());
-    Poly::TSimplePolugon boundary {{{0, 0},
+    Poly::TSimplePolygon boundary {{{0, 0},
                                        {1, 1},
                                        {2, 2}}};
     Poly poly1 {boundary};
@@ -352,7 +352,7 @@ TEST(space_Polygon, HasHolesPolygon)
 
     Poly poly;
     ASSERT_FALSE (poly.hasHoles());
-    Poly::TSimplePolugon boundary {{{0, 0},
+    Poly::TSimplePolygon boundary {{{0, 0},
                                        {1, 1},
                                        {2, 2}}};
     space::Vector<SimplePoly> holes;
@@ -371,7 +371,7 @@ TEST(space_Polygon, boundary_Polygon)
     Poly poly;
     EXPECT_THROW((void)poly.boundary(), std::out_of_range);
 
-    Poly::TSimplePolugon boundary {{{0, 0},
+    Poly::TSimplePolygon boundary {{{0, 0},
                                        {1, 1},
                                        {2, 2}}};
 
@@ -388,7 +388,7 @@ TEST(space_Polygon, HolesPolygon)
     Poly poly;
     ASSERT_TRUE (poly.holes().empty());
 
-    Poly::TSimplePolugon boundary {{{0, 0},
+    Poly::TSimplePolygon boundary {{{0, 0},
                                        {1, 1},
                                        {2, 2}}};
     Poly poly1 {boundary};
@@ -409,7 +409,7 @@ TEST(space_Polygon, MovePolygon)
     using Poly = space::Polygon<int32_t>;
     using SimplePoly = space::SimplePolygon<int32_t>;
 
-    Poly::TSimplePolugon boundary {{{0, 0},
+    Poly::TSimplePolygon boundary {{{0, 0},
                                        {1, 1},
                                        {2, 2}}};
     space::Vector<SimplePoly> holes;
@@ -435,7 +435,7 @@ TEST(space_Polygon, BoundaryBoxOfPolygon)
 {
     using Poly = space::Polygon<int32_t>;
     using Rect = space::Rect<int32_t>;
-    using SimplePoly = Poly::TSimplePolugon;
+    using SimplePoly = Poly::TSimplePolygon;
 
     SimplePoly boundary {{{0, 0},
                              {1, 1},
@@ -456,7 +456,7 @@ TEST(space_Polygon, BoundaryBoxOfPolygon)
 TEST(space_Polygon, ComparePolygon)
 {
     using Poly = space::Polygon<int32_t>;
-    using SimplePoly = Poly::TSimplePolugon;
+    using SimplePoly = Poly::TSimplePolygon;
 
     SimplePoly boundary {{{0, 0},
                              {1, 1},
