@@ -255,7 +255,7 @@ template <typename TCrt>
 [[nodiscard]]
 constexpr space::Point<TCrt> topLeftOf(const Rect<TCrt>& rect) noexcept
 {
-    return {rect.pos().x(), rect.pos.y() + rect.height()};
+    return {rect.pos().x(), rect.pos().y() + rect.height()};
 }
 
 /**
