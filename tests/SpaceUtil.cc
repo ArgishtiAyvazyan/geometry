@@ -336,7 +336,7 @@ TEST(space_Polygon, EmptyPolygon)
     ASSERT_FALSE (poly1.empty());
     ASSERT_FALSE (poly1.hasHoles());
 
-    space::Vector<SimplePoly> holes;
+    space::collections::Vector<SimplePoly> holes;
     holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
     holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
 
@@ -355,7 +355,7 @@ TEST(space_Polygon, HasHolesPolygon)
     Poly::TSimplePolygon boundary {{{0, 0},
                                        {1, 1},
                                        {2, 2}}};
-    space::Vector<SimplePoly> holes;
+    space::collections::Vector<SimplePoly> holes;
     holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
     holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
 
@@ -394,7 +394,7 @@ TEST(space_Polygon, HolesPolygon)
     Poly poly1 {boundary};
     ASSERT_TRUE (poly1.holes().empty());
 
-    space::Vector<SimplePoly> holes;
+    space::collections::Vector<SimplePoly> holes;
     holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
     holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
 
@@ -412,7 +412,7 @@ TEST(space_Polygon, MovePolygon)
     Poly::TSimplePolygon boundary {{{0, 0},
                                        {1, 1},
                                        {2, 2}}};
-    space::Vector<SimplePoly> holes;
+    space::collections::Vector<SimplePoly> holes;
     holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
     holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
 
@@ -443,7 +443,7 @@ TEST(space_Polygon, BoundaryBoxOfPolygon)
                              {124, 444},
                              {2, 2}}};
 
-    space::Vector<SimplePoly> holes;
+    space::collections::Vector<SimplePoly> holes;
     holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
     holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
 
@@ -464,7 +464,7 @@ TEST(space_Polygon, ComparePolygon)
                              {124, 444},
                              {2, 2}}};
 
-    space::Vector<SimplePoly> holes;
+    space::collections::Vector<SimplePoly> holes;
     holes.push_back(SimplePoly {{{3, 3}, {1, 1}, {2, 2}}});
     holes.push_back(SimplePoly {{{6, 6}, {3, 3}, {9, 9}}});
 
@@ -484,7 +484,7 @@ TEST(space_Polygon, ContainsPolygon)
 
     SimplePoly boundary {{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}};
 
-    space::Vector<SimplePoly> holes;
+    space::collections::Vector<SimplePoly> holes;
     holes.push_back(SimplePoly {{{4, 3}, {5, 5}, {7, 4}, { 6, 2 }}});
     holes.push_back(SimplePoly {{{9, 2}, {9, 3}, {11, 5}, { 11, 4 }}});
 
@@ -509,7 +509,7 @@ TEST(space_Polygon, ContainsPolygonVertexContains)
 
     SimplePoly boundary {{{2, 1}, {3, 5}, {5, 6}, {10, 6}, {12, 5}, {12, 3}, {10, 1}}};
 
-    space::Vector<SimplePoly> holes;
+    space::collections::Vector<SimplePoly> holes;
     holes.push_back(SimplePoly {{{4, 3}, {5, 5}, {7, 4}, { 6, 2 }}});
     holes.push_back(SimplePoly {{{9, 2}, {9, 3}, {11, 5}, { 11, 4 }}});
 

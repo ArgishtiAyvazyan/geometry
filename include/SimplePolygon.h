@@ -44,7 +44,7 @@ public:
     /**
      * @brief   The type for representing piecewise linear curve.
      */
-    using TPiecewiseLinearCurve = space::Vector<space::Point<TCoordinate>>;
+    using TPiecewiseLinearCurve = space::collections::Vector<space::Point<TCoordinate>>;
 
 public:
     constexpr SimplePolygon() = default;

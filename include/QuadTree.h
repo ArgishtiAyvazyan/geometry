@@ -43,8 +43,8 @@ private:
     public:
         using TValue = TKey;
         using TRegion = space::Square<typename TKey::TCoordinate>;
-        using TChildContainer = space::Array<std::unique_ptr<Node>, 4>;
-        using TValueContainer = space::FlatSet<TValue>;
+        using TChildContainer = space::collections::Array<std::unique_ptr<Node>, 4>;
+        using TValueContainer = space::collections::FlatSet<TValue>;
 
         Node() = delete;
 
@@ -179,7 +179,7 @@ public:
     template <typename TOutIt>
     void query(const TKey& key, TOutIt outIt) const
     {
-        space::Stack<const Node*> nodeStack;
+        space::collections::Stack<const Node*> nodeStack;
         auto pushNodeIfNotNull = [&nodeStack](const Node* node)
         {
             if (nullptr == node)
