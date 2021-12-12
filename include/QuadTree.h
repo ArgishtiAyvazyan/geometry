@@ -199,7 +199,7 @@ public:
         while (!nodeStack.empty())
         {
             const Node* currentNode = popNode();
-            if (!space::util::hesIntersect(key, currentNode->region()))
+            if (!space::util::hasIntersect(key, currentNode->region()))
             {
                 continue;
             }
@@ -209,7 +209,7 @@ public:
             }
             for (const auto& value : currentNode->getValues())
             {
-                if (!space::util::hesIntersect(key, value))
+                if (!space::util::hasIntersect(key, value))
                 {
                     continue;
                 }

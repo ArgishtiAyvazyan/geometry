@@ -17,6 +17,7 @@
 #include "Point.h"
 #include "Rect.h"
 #include "Segment.h"
+#include "Vector.h"
 
 namespace space
 {
@@ -218,7 +219,7 @@ constexpr bool contains(const SimplePolygon<TCrt>& poly, const Point<TCrt>& poin
     {
         const auto next = (i + 1) % numOfVertex;
         Segment polygonEdge {boundary[i], boundary[next]};
-        if (hesIntersect(polygonEdge, horizontalLine))
+        if (hasIntersect(polygonEdge, horizontalLine))
         {
             if (impl::EOrientation::collinear
                 == impl::orientation(polygonEdge.first, point, polygonEdge.second))
@@ -241,6 +242,106 @@ constexpr bool contains(const SimplePolygon<TCrt>& poly, const Point<TCrt>& poin
 
     // Return true if count is odd, false otherwise
     return count & 1;
+}
+
+namespace impl
+{
+
+/**
+ * @brief Calculate the projection of a polygon on an axis.
+ * 
+ * @tparam TCrt     TCrt The type of coordinates.
+ * @param axis      The axis for projection.
+ * @param polygon   The polygon for projection.
+ * @return std::pair<TCrt, TCrt> [min, max] interval for projection.
+ */
+template <typename TCrt>
+[[nodiscard]]
+constexpr std::pair<TCrt, TCrt> projectPolygon(const Vector<TCrt>& axis, const SimplePolygon<TCrt>& polygon) noexcept
+{
+    // To project a point on an axis use the dot product
+    auto dotProduct = util::dotProduct(axis, Vector<TCrt>{ polygon.boundaryCurve()[0] });
+    auto min = dotProduct;
+    auto max = dotProduct;
+    for (auto&& vertex : polygon.boundaryCurve())
+    {
+        dotProduct = util::dotProduct(axis, Vector<TCrt>{ vertex });
+        if (dotProduct < min)
+        {
+            min = dotProduct;
+        }
+        else if (dotProduct > max)
+        {
+            max = dotProduct;
+        }
+    }
+    return std::make_pair(min, max);
+}
+
+/**
+ * @brief       Calculate the distance between [minA, maxA] and [minB, maxB]
+ *              The distance will be negative if the intervals overlap
+ * 
+ * @tparam TCrt TCrt The type of coordinates.
+ * @param minA  The start of first segment.
+ * @param maxA  The end of first segment.
+ * @param minB  The start of second segment.
+ * @param maxB  The end of second segment.
+ * @return TCrt The distance between [minA, maxA] and [minB, maxB].
+ */
+template <typename TCrt>
+[[nodiscard]]
+constexpr TCrt intervalDistance(TCrt minA, TCrt maxA, TCrt minB, TCrt maxB) noexcept
+{
+    if (minA < minB)
+    {
+        return minB - maxA;
+    }
+    return minA - maxB;
+}
+
+template <typename TCrt>
+[[nodiscard]]
+constexpr bool polygonProjectionshasIntersect(const Vector<TCrt>& axis
+            , const SimplePolygon<TCrt>& first
+            , const SimplePolygon<TCrt>& second) noexcept
+{
+    // Find the projection of the polygon on the current axis
+    const auto [minA, maxA] = impl::projectPolygon(axis, first);
+    const auto [minB, maxB] = impl::projectPolygon(axis, second);
+
+    // Check if the polygon projections are currentlty intersecting
+    return !(impl::intervalDistance(minA, maxA, minB, maxB) > 0);
+}
+
+template <typename TCrt>
+[[nodiscard]]
+constexpr bool polygonEdgesProjectionsOverlaps(const SimplePolygon<TCrt>& first, const SimplePolygon<TCrt>& second) noexcept
+{
+    auto edgeCountFirst = std::size(first.boundaryCurve());
+    for (size_t edgeIndex = 0; edgeIndex < edgeCountFirst; ++edgeIndex)
+    {
+        const auto& p1 =  first.boundaryCurve()[edgeIndex];
+        const auto& p2 =  first.boundaryCurve()[(edgeIndex + 1) % edgeCountFirst];
+        auto edge = Vector { p2 } - Vector { p1 };
+        Vector axis = util::axisPerpendicularOf(edge);
+
+        if (!impl::polygonProjectionshasIntersect(axis, first, second))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+} // namespace impl
+
+template <typename TCrt>
+[[nodiscard]]
+constexpr bool hasIntersect(const SimplePolygon<TCrt>& first, const SimplePolygon<TCrt>& second) noexcept
+{
+    return impl::polygonEdgesProjectionsOverlaps(first, second)
+        && impl::polygonEdgesProjectionsOverlaps(second, first);
 }
 
 } // namespace util

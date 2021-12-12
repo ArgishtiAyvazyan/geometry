@@ -72,7 +72,7 @@ constexpr TRetVal distance(const Point<TCrt>& first, const Point<TCrt>& second) 
  */
  template <typename TOrthogonalShape1, typename TOrthogonalShape2>
 [[nodiscard]]
-constexpr bool hesIntersect(const TOrthogonalShape1& first, const TOrthogonalShape2& second) noexcept
+constexpr bool hasIntersect(const TOrthogonalShape1& first, const TOrthogonalShape2& second) noexcept
 {
     const auto[firstX1, firstY1] = bottomLeftOf(first);
     const auto[firstX2, firstY2] = topRightOf(first);

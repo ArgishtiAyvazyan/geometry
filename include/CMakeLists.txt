@@ -8,7 +8,8 @@ add_library(geometry_lib STATIC
         "main.cc"
         "SimplePolygon.h"
         "Polygon.h"
-        "Segment.h")
+        "Segment.h"
+        "Vector.h")
 
 target_include_directories(geometry_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_features(geometry_lib INTERFACE )
