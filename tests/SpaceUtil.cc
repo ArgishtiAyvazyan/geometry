@@ -7,13 +7,16 @@
  */
 
 
+#include <thread>
+#include <future>
+
 #include <gtest/gtest.h>
 
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/geometries/segment.hpp>
 #include <boost/geometry/algorithms/intersection.hpp>
-
+#include <boost/geometry/geometries/polygon.hpp>
 
 #include <boost/geometry/index/rtree.hpp>
 
@@ -49,6 +52,48 @@ auto spaceToBoostRect(const space::Rect<TCrt>& rect)
     const auto[x2, y2] = space::util::topRightOf(rect);
     return box(point(x1, y1), point(x2, y2));
 }
+
+template <typename TCrt>
+space::SimplePolygon<TCrt> rectToPolygon(const space::Rect<TCrt>& rect)
+{
+    using Poly = space::SimplePolygon<TCrt>;
+    typename Poly::TPiecewiseLinearCurve boundary {{space::util::bottomLeftOf(rect)
+                                            , space::util::topLeftOf(rect)
+                                            , space::util::topRightOf(rect)
+                                            , space::util::bottomRightOf(rect) }};
+
+    return Poly{ boundary };
+}
+
+
+template<typename TCrt>
+space::SimplePolygon<TCrt> randomPolygon()
+{
+    using Poly = space::SimplePolygon<int32_t>;
+
+    Poly::TPiecewiseLinearCurve boundary;
+    const auto numOfVertex = std::rand() % 50 + 2;
+    for (size_t i = 0; i < numOfVertex; ++i)
+    {
+        boundary.push_back(space::Point<TCrt>{std::rand() % 1000, std::rand() % 1000});
+    }
+    return Poly {boundary};
+}
+
+
+template<typename TCrt>
+typename boost::geometry::model::polygon<boost::geometry::model::point<TCrt, 2, boost::geometry::cs::cartesian>> 
+    spacePolygonToBoostPolygon(const space::SimplePolygon<TCrt>& spacePoly)
+{
+    typename boost::geometry::model::polygon<boost::geometry::model::point<TCrt, 2, boost::geometry::cs::cartesian>> boostPoly;
+    for (const auto& vertex : spacePoly.boundaryCurve())
+    {
+        boost::geometry::append(boostPoly.outer()
+            , boost::geometry::model::point<TCrt, 2, boost::geometry::cs::cartesian>(vertex.x(), vertex.y()));
+    }
+    return boostPoly;
+}
+
 
 TEST(space_Point, ComparePoint)
 {
@@ -319,6 +364,76 @@ TEST(space_SimplePolygon, ContainsPointSimplePolygonSimpleCases)
                 ASSERT_TRUE(false);
             }
         }
+    }
+}
+
+
+TEST(space_SimplePolygon, HesIntersectBasedOnRect)
+{
+    for (int64_t i = 0; i < 1'000'000; ++i)
+    {
+        space::Rect<int32_t> spaceRect1 {{std::rand() % 1000, std::rand() % 1000}, std::rand() % 1000,
+                                         std::rand() % 1000};
+        space::Rect<int32_t> spaceRect2 {{std::rand() % 1000, std::rand() % 1000}, std::rand() % 1000,
+                                         std::rand() % 1000};
+        const auto boostBox1 = spaceToBoostRect(spaceRect1);
+        const auto boostBox2 = spaceToBoostRect(spaceRect2);
+        ASSERT_TRUE(space::util::hesIntersect(rectToPolygon(spaceRect1), rectToPolygon(spaceRect2))
+                == space::util::hesIntersect(rectToPolygon(spaceRect2), rectToPolygon(spaceRect1)));
+        ASSERT_TRUE(space::util::hesIntersect(rectToPolygon(spaceRect1), rectToPolygon(spaceRect2))
+                == boost::geometry::intersects(boostBox1, boostBox2));
+    }
+}
+
+
+TEST(space_SimplePolygon, HesIntersectEqualPoly)
+{
+    auto processor_count = std::thread::hardware_concurrency();
+    processor_count = processor_count != 0 ? processor_count : 2;
+    std::vector<std::future<void>> tasks;
+    tasks.reserve(processor_count);
+    for (int threadID = 0; threadID < processor_count; ++threadID)
+    {
+        tasks.push_back(std::async(std::launch::async
+        , []()
+        {
+            for (int64_t i = 0; i < 10'000; ++i)
+            {
+                const auto spacePoly = randomPolygon<int32_t>();
+
+                ASSERT_TRUE(space::util::hesIntersect(spacePoly, spacePoly));
+            }
+        }));
+    }
+
+}
+
+
+TEST(space_SimplePolygon, HesIntersectComplex)
+{
+    auto processor_count = std::thread::hardware_concurrency();
+    processor_count = processor_count != 0 ? processor_count : 2;
+    std::vector<std::future<void>> tasks;
+    tasks.reserve(processor_count);
+    for (int threadID = 0; threadID < processor_count; ++threadID)
+    {
+        tasks.push_back(std::async(std::launch::async
+        , []()
+        {
+            for (int64_t i = 0; i < 10'000; ++i)
+            {
+                const auto spacePoly = randomPolygon<int32_t>();
+                const auto spacePoly1 = randomPolygon<int32_t>();
+
+                // const auto boostPoly = spacePolygonToBoostPolygon(spacePoly);
+                // const auto boostPoly1 = spacePolygonToBoostPolygon(spacePoly1);
+
+                ASSERT_TRUE(space::util::hesIntersect(spacePoly, spacePoly1)
+                    == space::util::hesIntersect(spacePoly1, spacePoly));
+                // ASSERT_TRUE(space::util::hesIntersect(spacePoly, spacePoly1)
+                //     == boost::geometry::intersects(boostPoly, boostPoly1));
+            }
+        }));
     }
 }
 
