@@ -16,7 +16,7 @@
 #include <stdexcept>
 #include <boost/container/flat_set.hpp>
 
-namespace space
+namespace space::collections
 {
 template <typename ... T>
 using Vector = std::vector<T...>;

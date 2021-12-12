@@ -64,7 +64,7 @@ public:
      * @param boundary  A simple polygon representing an external boundary for a polygon with holes.
      * @param holes     A set of simple polygon representing an interior boundaries (holes) for a polygon with holes.
      */
-    constexpr explicit Polygon(TSimplePolygon boundary, space::Vector<TSimplePolygon> holes = {})
+    constexpr explicit Polygon(TSimplePolygon boundary, space::collections::Vector<TSimplePolygon> holes = {})
         : m_arrContours {}
     {
         m_arrContours.reserve(std::size(holes) + 1);
@@ -132,13 +132,13 @@ public:
      * @return  The const span on the holes collection.
      */
     [[nodiscard]]
-    space::Span<const TSimplePolygon> holes() const noexcept
+    space::collections::Span<const TSimplePolygon> holes() const noexcept
     {
         if (!hasHoles())
         {
             return {};
         }
-        return space::Span<const TSimplePolygon> {m_arrContours}.subspan(1, std::size(m_arrContours) - 1);
+        return space::collections::Span<const TSimplePolygon> {m_arrContours}.subspan(1, std::size(m_arrContours) - 1);
     }
 
     /**
@@ -148,13 +148,13 @@ public:
      * @return  The span on the holes collection.
      */
     [[nodiscard]]
-    space::Span<TSimplePolygon> holes() noexcept
+    space::collections::Span<TSimplePolygon> holes() noexcept
     {
         if (!hasHoles())
         {
             return {};
         }
-        return space::Span<TSimplePolygon> {m_arrContours}.subspan(1, std::size(m_arrContours) - 1);
+        return space::collections::Span<TSimplePolygon> {m_arrContours}.subspan(1, std::size(m_arrContours) - 1);
     }
 
 
@@ -164,7 +164,7 @@ private:
      * @brief   The polygon representation by polygons. The first item represents
      *          the polygon outside boundaries the others represent holes.
      */
-    space::Vector<TSimplePolygon> m_arrContours;
+    space::collections::Vector<TSimplePolygon> m_arrContours;
 }; // class Polygon
 
 namespace util
