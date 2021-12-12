@@ -219,7 +219,7 @@ constexpr bool contains(const SimplePolygon<TCrt>& poly, const Point<TCrt>& poin
     {
         const auto next = (i + 1) % numOfVertex;
         Segment polygonEdge {boundary[i], boundary[next]};
-        if (hesIntersect(polygonEdge, horizontalLine))
+        if (hasIntersect(polygonEdge, horizontalLine))
         {
             if (impl::EOrientation::collinear
                 == impl::orientation(polygonEdge.first, point, polygonEdge.second))
@@ -302,7 +302,7 @@ constexpr TCrt intervalDistance(TCrt minA, TCrt maxA, TCrt minB, TCrt maxB) noex
 
 template <typename TCrt>
 [[nodiscard]]
-constexpr bool polygonProjectionsHesIntersect(const Vector<TCrt>& axis
+constexpr bool polygonProjectionshasIntersect(const Vector<TCrt>& axis
             , const SimplePolygon<TCrt>& first
             , const SimplePolygon<TCrt>& second) noexcept
 {
@@ -326,7 +326,7 @@ constexpr bool polygonEdgesProjectionsOverlaps(const SimplePolygon<TCrt>& first,
         auto edge = Vector { p2 } - Vector { p1 };
         Vector axis = util::axisPerpendicularOf(edge);
 
-        if (!impl::polygonProjectionsHesIntersect(axis, first, second))
+        if (!impl::polygonProjectionshasIntersect(axis, first, second))
         {
             return false;
         }
@@ -338,7 +338,7 @@ constexpr bool polygonEdgesProjectionsOverlaps(const SimplePolygon<TCrt>& first,
 
 template <typename TCrt>
 [[nodiscard]]
-constexpr bool hesIntersect(const SimplePolygon<TCrt>& first, const SimplePolygon<TCrt>& second) noexcept
+constexpr bool hasIntersect(const SimplePolygon<TCrt>& first, const SimplePolygon<TCrt>& second) noexcept
 {
     return impl::polygonEdgesProjectionsOverlaps(first, second)
         && impl::polygonEdgesProjectionsOverlaps(second, first);

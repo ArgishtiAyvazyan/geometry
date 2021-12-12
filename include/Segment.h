@@ -132,7 +132,7 @@ EOrientation orientation(const Point <TCrt>& p, const Point <TCrt>& q, const Poi
  * @return          true if segments have an intersection, otherwise false.
  */
 template <typename TCrt>
-constexpr bool hesIntersect(const Segment<TCrt>& first, const Segment<TCrt>& second) noexcept
+constexpr bool hasIntersect(const Segment<TCrt>& first, const Segment<TCrt>& second) noexcept
 {
     const auto[p1, q1] = first;
     const auto[p2, q2] = second;

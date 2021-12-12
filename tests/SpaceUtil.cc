@@ -171,18 +171,18 @@ TEST(space_util, IntersectsRect)
     space::Rect<int32_t> rect {{50, 13}, 100, 100};
     space::Rect<int32_t> rect1 {{0, 0}, 123, 123};
 
-    ASSERT_TRUE(space::util::hesIntersect(rect, rect1));
-    ASSERT_TRUE(space::util::hesIntersect(rect1, rect));
+    ASSERT_TRUE(space::util::hasIntersect(rect, rect1));
+    ASSERT_TRUE(space::util::hasIntersect(rect1, rect));
 
     space::util::move(rect1, 149, 110);
 
-    ASSERT_TRUE(space::util::hesIntersect(rect, rect1));
-    ASSERT_TRUE(space::util::hesIntersect(rect1, rect));
+    ASSERT_TRUE(space::util::hasIntersect(rect, rect1));
+    ASSERT_TRUE(space::util::hasIntersect(rect1, rect));
 
     space::util::move(rect1, 100000, 100000);
 
-    ASSERT_FALSE(space::util::hesIntersect(rect, rect1));
-    ASSERT_FALSE(space::util::hesIntersect(rect1, rect));
+    ASSERT_FALSE(space::util::hasIntersect(rect, rect1));
+    ASSERT_FALSE(space::util::hasIntersect(rect1, rect));
 
     for (int64_t i = 0; i < 1'000'000; ++i)
     {
@@ -192,7 +192,7 @@ TEST(space_util, IntersectsRect)
                                          std::rand() % 1000};
         const auto boostBox1 = spaceToBoostRect(spaceRect1);
         const auto boostBox2 = spaceToBoostRect(spaceRect2);
-        ASSERT_TRUE(space::util::hesIntersect(spaceRect1, spaceRect2)
+        ASSERT_TRUE(space::util::hasIntersect(spaceRect1, spaceRect2)
                 == boost::geometry::intersects(boostBox1, boostBox2));
     }
 }
@@ -202,18 +202,18 @@ TEST(space_Square, IntersectsSquare)
     space::Rect<int32_t> rect {{50, 13}, 100, 100};
     space::Square<int32_t> rect1 {{0, 0}, 123};
 
-    ASSERT_TRUE(space::util::hesIntersect(rect, rect1));
-    ASSERT_TRUE(space::util::hesIntersect(rect1, rect));
+    ASSERT_TRUE(space::util::hasIntersect(rect, rect1));
+    ASSERT_TRUE(space::util::hasIntersect(rect1, rect));
 
     space::util::move(rect1, 149, 110);
 
-    ASSERT_TRUE(space::util::hesIntersect(rect, rect1));
-    ASSERT_TRUE(space::util::hesIntersect(rect1, rect));
+    ASSERT_TRUE(space::util::hasIntersect(rect, rect1));
+    ASSERT_TRUE(space::util::hasIntersect(rect1, rect));
 
     space::util::move(rect1.pos(), 100000, 100000);
 
-    ASSERT_FALSE(space::util::hesIntersect(rect, rect1));
-    ASSERT_FALSE(space::util::hesIntersect(rect1, rect));
+    ASSERT_FALSE(space::util::hasIntersect(rect, rect1));
+    ASSERT_FALSE(space::util::hasIntersect(rect1, rect));
 }
 
 TEST(space_Square, CompareSquare)
@@ -368,7 +368,7 @@ TEST(space_SimplePolygon, ContainsPointSimplePolygonSimpleCases)
 }
 
 
-TEST(space_SimplePolygon, HesIntersectBasedOnRect)
+TEST(space_SimplePolygon, hasIntersectBasedOnRect)
 {
     for (int64_t i = 0; i < 1'000'000; ++i)
     {
@@ -378,15 +378,15 @@ TEST(space_SimplePolygon, HesIntersectBasedOnRect)
                                          std::rand() % 1000};
         const auto boostBox1 = spaceToBoostRect(spaceRect1);
         const auto boostBox2 = spaceToBoostRect(spaceRect2);
-        ASSERT_TRUE(space::util::hesIntersect(rectToPolygon(spaceRect1), rectToPolygon(spaceRect2))
-                == space::util::hesIntersect(rectToPolygon(spaceRect2), rectToPolygon(spaceRect1)));
-        ASSERT_TRUE(space::util::hesIntersect(rectToPolygon(spaceRect1), rectToPolygon(spaceRect2))
+        ASSERT_TRUE(space::util::hasIntersect(rectToPolygon(spaceRect1), rectToPolygon(spaceRect2))
+                == space::util::hasIntersect(rectToPolygon(spaceRect2), rectToPolygon(spaceRect1)));
+        ASSERT_TRUE(space::util::hasIntersect(rectToPolygon(spaceRect1), rectToPolygon(spaceRect2))
                 == boost::geometry::intersects(boostBox1, boostBox2));
     }
 }
 
 
-TEST(space_SimplePolygon, HesIntersectEqualPoly)
+TEST(space_SimplePolygon, hasIntersectEqualPoly)
 {
     auto processor_count = std::thread::hardware_concurrency();
     processor_count = processor_count != 0 ? processor_count : 2;
@@ -401,7 +401,7 @@ TEST(space_SimplePolygon, HesIntersectEqualPoly)
             {
                 const auto spacePoly = randomPolygon<int32_t>();
 
-                ASSERT_TRUE(space::util::hesIntersect(spacePoly, spacePoly));
+                ASSERT_TRUE(space::util::hasIntersect(spacePoly, spacePoly));
             }
         }));
     }
@@ -409,7 +409,7 @@ TEST(space_SimplePolygon, HesIntersectEqualPoly)
 }
 
 
-TEST(space_SimplePolygon, HesIntersectComplex)
+TEST(space_SimplePolygon, hasIntersectComplex)
 {
     auto processor_count = std::thread::hardware_concurrency();
     processor_count = processor_count != 0 ? processor_count : 2;
@@ -428,9 +428,9 @@ TEST(space_SimplePolygon, HesIntersectComplex)
                 // const auto boostPoly = spacePolygonToBoostPolygon(spacePoly);
                 // const auto boostPoly1 = spacePolygonToBoostPolygon(spacePoly1);
 
-                ASSERT_TRUE(space::util::hesIntersect(spacePoly, spacePoly1)
-                    == space::util::hesIntersect(spacePoly1, spacePoly));
-                // ASSERT_TRUE(space::util::hesIntersect(spacePoly, spacePoly1)
+                ASSERT_TRUE(space::util::hasIntersect(spacePoly, spacePoly1)
+                    == space::util::hasIntersect(spacePoly1, spacePoly));
+                // ASSERT_TRUE(space::util::hasIntersect(spacePoly, spacePoly1)
                 //     == boost::geometry::intersects(boostPoly, boostPoly1));
             }
         }));
@@ -681,7 +681,7 @@ TEST(space_Segment, Compare_Segment)
     ASSERT_TRUE(segment != segment2);
 }
 
-TEST(space_Segment, HesIntersectSimpleSegment)
+TEST(space_Segment, hasIntersectSimpleSegment)
 {
     using Point = space::Point<int32_t>;
     using Segment = space::Segment<int32_t>;
@@ -693,10 +693,10 @@ TEST(space_Segment, HesIntersectSimpleSegment)
     Point q2 {4, 1};
     Segment segment2 {p2, q2};
 
-    ASSERT_TRUE(space::util::hesIntersect(segment, segment2));
+    ASSERT_TRUE(space::util::hasIntersect(segment, segment2));
 }
 
-TEST(space_Segment, hesIntersect_Segment)
+TEST(space_Segment, hasIntersect_Segment)
 {
     using SPoint = space::Point<int32_t>;
     using SSegment = space::Segment<int32_t>;
@@ -715,8 +715,8 @@ TEST(space_Segment, hesIntersect_Segment)
         BSegment bSegment2 {spaceToBoostPoint(p2), spaceToBoostPoint(q2)};
 
         const bool result = boost::geometry::intersects(bSegment1, bSegment2);
-        ASSERT_TRUE(result == space::util::hesIntersect(sSegment1, sSegment2));
-        ASSERT_TRUE(result == space::util::hesIntersect(sSegment2, sSegment1));
+        ASSERT_TRUE(result == space::util::hasIntersect(sSegment1, sSegment2));
+        ASSERT_TRUE(result == space::util::hasIntersect(sSegment2, sSegment1));
     }
 }
 
