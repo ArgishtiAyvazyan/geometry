@@ -565,7 +565,7 @@ TEST(space_Polygon, BoundaryBoxOfPolygon)
     Poly poly {boundary, holes};
     const auto bBox = space::util::boundaryBoxOf(poly);
     Rect target {{0,   0}, {124, 444}};
-    ASSERT_EQ(bBox , target);
+    ASSERT_TRUE(bBox == target);
 }
 
 TEST(space_Polygon, ComparePolygon)
@@ -660,8 +660,8 @@ TEST(space_Segment, SimpleSegment)
                       {5, 5}};
     Point target1{3, 3};
     Point target2{5, 5};
-    ASSERT_EQ(target1, segment2.first);
-    ASSERT_EQ(target2, segment2.second);
+    ASSERT_TRUE(target1 == segment2.first);
+    ASSERT_TRUE(target2 == segment2.second);
 }
 
 
