@@ -17,6 +17,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/b
 
 IF (BUILD_UNIT_TESTS)
     add_subdirectory ("tests")
+    add_subdirectory ("benchmarks")
 ENDIF()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
